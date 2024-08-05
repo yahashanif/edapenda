@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDbcFmh59j-abNgbBFmoj9gTF_idpsr6-o</string>
+	<key>GCM_SENDER_ID</key>
+	<string>790298635343</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.pensiun.eDapenda</string>
+	<key>PROJECT_ID</key>
+	<string>edapenda-421e5</string>
+	<key>STORAGE_BUCKET</key>
+	<string>edapenda-421e5.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:790298635343:ios:acd9a4188d2af2e19b8e3a</string>
+</dict>
+</plist>
