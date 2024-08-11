@@ -32,6 +32,7 @@ class PendataanFotoCubit extends Cubit<PendataanFotoState> {
           await PendataanFotoRepository().getPendataanFoto(token: token);
       emit(PendataanFotoLoaded(pendataanFoto: data));
     } catch (e) {
+      print(e.toString());
       emit(PendataanFotoFailed(error: e.toString()));
     }
   }

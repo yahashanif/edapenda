@@ -9,6 +9,8 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:dapenda/app.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,21 +25,20 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
 import 'app/notification_manager.dart';
-import 'firebase_options.dart';
 import 'model/Recognition.dart';
 import 'repository/Recognizer.dart';
 
 late List<CameraDescription> cameras;
 
 @pragma('vm:entry-point')
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   await setupFlutterNotifications();
-//   // showFlutterNotification(message);
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
-//   print('Handling a background message ${message.messageId}');
-// }
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  await setupFlutterNotifications();
+  // showFlutterNotification(message);
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  print('Handling a background message ${message.messageId}');
+}
 
 late AndroidNotificationChannel channel;
 
@@ -97,23 +98,22 @@ late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // // await Firebase.initializeApp();
+  await Firebase.initializeApp();
   // // await FirebaseMessaging.instance.setAutoInitEnabled(true);
   // // print("FCMToken $fcmToken");
   // FirebaseMethod().init();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  // NotificationManager().init();
+  await Firebase.initializeApp();
+  NotificationManager().init();
   // // Set the background messaging handler early on, as a named top-level function
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-  //   alert: true,
-  //   badge: true,
-  //   sound: true,
-  // );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
 
-  // print(FirebaseMessaging.instance.getToken());
+  print("TOKEN");
+  print(await FirebaseMessaging.instance.getToken());
 
   // if (!kIsWeb) {
   //   await setupFlutterNotifications();

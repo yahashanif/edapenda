@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "790298635343",
+    "project_id": "edapenda-421e5",
+    "storage_bucket": "edapenda-421e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790298635343:android:a2abb501d6339e339b8e3a",
+        "android_client_info": {
+          "package_name": "com.pensiun.eDapenda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn68IU2mKRbgimumC6KoHAV7Oh7Z9k5Wg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

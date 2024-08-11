@@ -798,3 +798,8 @@ List<double> listAPIDummy = [
   -0.00692357262596488,
   0.005881370045244694
 ];
+
+BoxShadow defaultBoxShadow = BoxShadow(
+    offset: const Offset(0, 1),
+    blurRadius: 2,
+    color: Colors.black.withOpacity(0.12));

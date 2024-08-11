@@ -2,6 +2,7 @@ import 'package:dapenda/app/notification_manager.dart';
 import 'package:dapenda/app/routes.dart';
 import 'package:dapenda/cubit/auth_cubit/auth_cubit.dart';
 import 'package:dapenda/cubit/berkas_cubit/berkas_cubit.dart';
+import 'package:dapenda/cubit/cek_otentikasi_cubit/cek_otentikasi_cubit.dart';
 import 'package:dapenda/cubit/data_peserta_cubit/data_peserta_cubit.dart';
 import 'package:dapenda/cubit/faq_cubit/faq_cubit.dart';
 import 'package:dapenda/cubit/pendataan_foto_cubit/pendataan_foto_cubit.dart';
@@ -14,6 +15,7 @@ import 'package:dapenda/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../app/constant.dart';
 import '../../cubit/berkas_cubit/berkas_ulang_cubit.dart';
@@ -36,6 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentPageValue = 0;
   Box tokenBox = Hive.box('token');
   bool initBerkas = true;
+  int _countFoto = 0;
+  Box dataBox = Hive.box("countFoto");
 
   // final GlobalKey<RefreshIndicatorState> _key =
   //     GlobalKey<RefreshIndicatorState>();
@@ -43,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     NotificationManager().RequestPermissions();
+
     // TODO: implement initState
     super.initState();
     context.read<ProvinceCubit>().getProvince(token: tokenBox.get("token"));
@@ -58,10 +63,17 @@ class _HomeScreenState extends State<HomeScreen> {
         .read<PendataanFotoCubit>()
         .pendataanFotoGet(token: tokenBox.get('token'));
     context.read<BerkasCubit>().getBerkas(token: tokenBox.get('token'));
+
+    context
+        .read<CekOtentikasiCubit>()
+        .cekOtentikasi(token: tokenBox.get('token'));
   }
 
   @override
   Widget build(BuildContext context) {
+    _countFoto = dataBox.get('countFoto') != null
+        ? int.parse(dataBox.get('countFoto').toString())
+        : 0;
     Widget indicator(bool isActive, page) {
       return GestureDetector(
         onTap: () {
@@ -137,104 +149,196 @@ class _HomeScreenState extends State<HomeScreen> {
                         DetailProfil(user: state.user),
                         BlocBuilder<PendataanFotoCubit, PendataanFotoState>(
                           builder: (context, state) {
+                            if (state is PendataanFotoLoading) {
+                              return Shimmer(
+                                direction: ShimmerDirection.ltr,
+                                gradient: LinearGradient(
+                                  stops: [0.2, 0.5, 0.8],
+                                  colors: [
+                                    Colors.grey[300]!,
+                                    Colors.grey[300]!.withOpacity(0.4),
+                                    Colors.grey[300]!
+                                  ],
+                                ),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 135,
+                                  color: Colors.grey[300]!,
+                                ),
+                              );
+                            }
                             print(state);
-                            // if (state is PendataanFotoLoaded) {
-                            //   if (state.pendataanFoto.foto == null) {
-                            //     return Menu(
-                            //       func: () {
-                            //         Navigator.pushNamed(
-                            //             context, pendataanFotoRoute);
-                            //         context
-                            //             .read<ValuePendataanFotoCubit>()
-                            //             .setValue(null);
-                            //       },
-                            //       title: 'Pendataan Foto',
-                            //       image: 'pendataan',
-                            //       subtitle:
-                            //           'Anda Belum Melakukan\nPendataan Foto',
-                            //     );
-                            //   } else {
-                            //     if (state.pendataanFoto.verified!) {
-                            //       return Menu(
-                            //         title: "Pendataan Foto",
-                            //         image: "success",
-                            //         subtitle: "Pendataan Foto Berhasil",
-                            //       );
-                            //     } else {
-                            //       if (state.pendataanFoto.foto != null) {
-                            //         return Menu(
-                            //           title: "Pendataan Foto",
-                            //           image: "success",
-                            //           subtitle:
-                            //               "Anda Sudah Melakukan Pendataan Foto\nSilahkan Tunggu Konfirmasi 1 x 24 Jam",
-                            //         );
-                            //       } else {
-                            //         return Menu(
-                            //           title: "Pendataan Foto",
-                            //           image: 'pendataan',
-                            //           subtitle:
-                            //               "Pendataan foto anda tidak sesuai\nsilahkan ulangi pendataan",
-                            //           func: () {
-                            //             Navigator.pushNamed(
-                            //                 context, pendataanFotoRoute);
-                            //             context
-                            //                 .read<ValuePendataanFotoCubit>()
-                            //                 .setValue(null);
-                            //           },
-                            //         );
-                            //       }
-                            //     }
-                            //   }
-                            // } else {
-                            return Menu(
-                              func: () {
-                                Navigator.pushNamed(
-                                    context, pendataanFotoRoute);
-                                context
-                                    .read<ValuePendataanFotoCubit>()
-                                    .setValue(null);
-                              },
-                              title: 'Pendataan Foto',
-                              image: 'pendataan',
-                              subtitle: 'Anda Belum Melakukan\nPendataan Foto',
-                            );
-                            // }
+                            if (state is PendataanFotoLoaded) {
+                              if (state.pendataanFoto.foto == null) {
+                                return Menu(
+                                  func: () {
+                                    Navigator.pushNamed(
+                                        context, pendataanFotoRoute);
+                                    context
+                                        .read<ValuePendataanFotoCubit>()
+                                        .setValue(null);
+                                  },
+                                  title: 'Pendataan Foto',
+                                  image: 'pendataan',
+                                  subtitle:
+                                      'Anda Belum Melakukan\nPendataan Foto',
+                                );
+                              } else {
+                                if (state.pendataanFoto.verified!) {
+                                  return Menu(
+                                    title: "Pendataan Foto",
+                                    image: "success",
+                                    subtitle: "Pendataan Foto Berhasil",
+                                  );
+                                } else {
+                                  if (state.pendataanFoto.foto != null) {
+                                    return Menu(
+                                      title: "Pendataan Foto",
+                                      image: "success",
+                                      subtitle:
+                                          "Anda Sudah Melakukan Pendataan Foto\nSilahkan Tunggu Konfirmasi 1 x 24 Jam",
+                                    );
+                                  } else {
+                                    return Menu(
+                                      title: "Pendataan Foto",
+                                      image: 'pendataan',
+                                      subtitle:
+                                          "Pendataan foto anda tidak sesuai\nsilahkan ulangi pendataan",
+                                      func: () {
+                                        Navigator.pushNamed(
+                                            context, pendataanFotoRoute);
+                                        context
+                                            .read<ValuePendataanFotoCubit>()
+                                            .setValue(null);
+                                      },
+                                    );
+                                  }
+                                }
+                              }
+                            } else {
+                              return Menu(
+                                func: () {
+                                  // Navigator.pushNamed(
+                                  //     context, pendataanFotoRoute);
+                                  Navigator.pushNamed(
+                                      context, petunjukFotoRoute,
+                                      arguments: pendataanFotoRoute);
+                                  context
+                                      .read<ValuePendataanFotoCubit>()
+                                      .setValue(null);
+                                },
+                                title: 'Pendataan Foto',
+                                image: 'pendataan',
+                                subtitle:
+                                    'Anda Belum Melakukan\nPendataan Foto',
+                              );
+                            }
                           },
                         ),
-                        BlocBuilder<PendataanFotoMatrikCubit,
-                            PendataanFotoMatrikState>(
-                          builder: (context, state) {
-                            print(state);
-                            return (state is PendataanFotoMatrikLoading)
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                      color: blue,
-                                    ),
-                                  )
-                                : Menu(
-                                    func: () {
-                                      Navigator.pushNamed(
-                                          context, otentikasiRoute);
-                                      // _statusFotoAwal == 'false'
-                                      //     ? _buildShowDialogOtentikasi(context)
-                                      //     : Navigator.push(
-                                      //         context,
-                                      //         MaterialPageRoute(
-                                      //           builder: (context) => Otentikasi(),
-                                      //         ),
-                                      //       );
-                                    },
-                                    title: 'Otentikasi',
-                                    subtitle:
-                                        'Silakan Lakukan Otentikasi\ndisini.',
-                                    image: 'otentikasi',
-                                  );
+                        BlocBuilder<CekOtentikasiCubit, CekOtentikasiState>(
+                          builder: (context, cekOtentikasiState) {
+                            if (cekOtentikasiState is CekOtentikasiLoaded) {
+                              return BlocBuilder<PendataanFotoMatrikCubit,
+                                  PendataanFotoMatrikState>(
+                                builder: (context, state) {
+                                  print(state);
+                                  return (state is PendataanFotoMatrikLoading)
+                                      ? Shimmer(
+                                          direction: ShimmerDirection.ltr,
+                                          gradient: LinearGradient(
+                                            stops: [0.2, 0.5, 0.8],
+                                            colors: [
+                                              Colors.grey[300]!,
+                                              Colors.grey[300]!
+                                                  .withOpacity(0.4),
+                                              Colors.grey[300]!
+                                            ],
+                                          ),
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 135,
+                                            color: Colors.grey[300]!,
+                                          ),
+                                        )
+                                      : Menu(
+                                          func: cekOtentikasiState
+                                                  .otentikasi.otentikasi!
+                                              ? null
+                                              : () {
+                                                  if (state
+                                                      is PendataanFotoMatrikLoaded) {
+                                                    if (state.list.isEmpty) {
+                                                    } else {
+                                                      if (cekOtentikasiState
+                                                                  .otentikasi
+                                                                  .count !=
+                                                              null &&
+                                                          cekOtentikasiState
+                                                                  .otentikasi
+                                                                  .count! >=
+                                                              3) {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            limitOtentikasiRoute,
+                                                            arguments:
+                                                                cekOtentikasiState
+                                                                    .otentikasi
+                                                                    .count!);
+                                                      } else {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            petunjukFotoRoute,
+                                                            arguments:
+                                                                otentikasiRoute);
+                                                      }
+                                                    }
+                                                  }
+                                                  // Navigator.pushNamed(
+                                                  //     context, otentikasiRoute);
+                                                  // _statusFotoAwal == 'false'
+                                                  //     ? _buildShowDialogOtentikasi(context)
+                                                  //     : Navigator.push(
+                                                  //         context,
+                                                  //         MaterialPageRoute(
+                                                  //           builder: (context) => Otentikasi(),
+                                                  //         ),
+                                                  //       );
+                                                },
+                                          title: 'Otentikasi',
+                                          subtitle: cekOtentikasiState
+                                                  .otentikasi.otentikasi!
+                                              ? 'Anda Sudah Melakukan\nOtentikasi'
+                                              : 'Silakan Lakukan Otentikasi\ndisini.',
+                                          image: 'otentikasi',
+                                        );
+                                },
+                              );
+                            }
+                            return Shimmer(
+                              direction: ShimmerDirection.ltr,
+                              gradient: LinearGradient(
+                                stops: [0.2, 0.5, 0.8],
+                                colors: [
+                                  Colors.grey[300]!,
+                                  Colors.grey[300]!.withOpacity(0.4),
+                                  Colors.grey[300]!
+                                ],
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: 135,
+                                color: Colors.grey[300]!,
+                              ),
+                            );
                           },
                         ),
                         BlocBuilder<BerkasCubit, BerkasState>(
                           builder: (context, state) {
                             return Menu(
                               func: () {
+                                context
+                                    .read<BerkasUlangCubit>()
+                                    .setValue(false);
                                 Navigator.pushNamed(context, dataUlangRoute);
                               },
                               // state is BerkasLoaded
@@ -266,15 +370,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               //     : null,
                               title: 'Data Ulang',
                               subtitle: state is BerkasLoaded
-                                  ? state.berkas.file1 == '' ||
-                                          state.berkas.file2 == ''
+                                  ? state.berkas.status == 1
                                       ? 'Anda Belum Mengunggah Berkas\nData Ulang'
-                                      : state.berkas.verified == true
-                                          ? 'Jika ada perubahan, Silakan\nlakukan disini.'
-                                          : state.berkas.verified == false &&
-                                                  state.berkas.status == true
-                                              ? "Menunggu Verifikasi Berkas\nData Ulang"
+                                      : state.berkas.status == 2
+                                          ? "Menunggu Verifikasi Berkas\nData Ulang"
+                                          : state.berkas.status == 3
+                                              ? "Jika ada perubahan, Silakan\nlakukan disini."
                                               : "Verifikasi Berkas\nData Ulang Gagal"
+
+                                  // state.berkas.status == 2 &&
+                                  //         state.berkas.verified == true
+                                  //     ? 'Jika ada perubahan, Silakan\nlakukan disini.'
+                                  //     : state.berkas.status == 1
+                                  //         ? "Menunggu Verifikasi Berkas\nData Ulang"
+                                  //         // ? state.berkas.verified.toString()
+                                  //         : "Verifikasi Berkas\nData Ulang Gagal"
                                   : '',
                               image: 'data',
                             );
@@ -356,7 +466,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                onRefresh: () async {});
+                onRefresh: () async {
+                  context
+                      .read<AuthCubit>()
+                      .syncAkun(token: tokenBox.get('token'));
+                  context
+                      .read<ProvinceCubit>()
+                      .getProvince(token: tokenBox.get("token"));
+                  context
+                      .read<PendataanFotoMatrikCubit>()
+                      .getPendataanFotoMatrik(token: tokenBox.get('token'));
+
+                  context
+                      .read<DataPesertaCubit>()
+                      .getDataPeserta(token: tokenBox.get("token"));
+
+                  context
+                      .read<PendataanFotoCubit>()
+                      .pendataanFotoGet(token: tokenBox.get('token'));
+                  context
+                      .read<BerkasCubit>()
+                      .getBerkas(token: tokenBox.get('token'));
+
+                  context
+                      .read<CekOtentikasiCubit>()
+                      .cekOtentikasi(token: tokenBox.get('token'));
+                });
           }
           return HomeShimmer();
         },

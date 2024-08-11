@@ -18,30 +18,36 @@ class DataPesertaCubit extends Cubit<DataPesertaState> {
     }
   }
 
-  Future<void> updateDataPeserta(
-      {required String token,
-      required String edu,
-      required String kegiatan,
-      required String alamat,
-      required String telp,
-      required String hp,
-      required String prop,
-      required String nik,
-      required String npwp,
-      required String pos}) async {
+  Future<void> updateDataPeserta({
+    required String token,
+    required String edu,
+    required String kegiatan,
+    required String alamat,
+    required String telp,
+    required String hp,
+    required String prop,
+    required String nik,
+    required String npwp,
+    required String pos,
+    required String nameKerabat,
+    required String telpKerabat,
+  }) async {
     try {
       emit(DataPesertaLoading());
       await DataPesertaRepository().updateDataPeserta(
-          token: token,
-          edu: edu,
-          kegiatan: kegiatan,
-          alamat: alamat,
-          telp: telp,
-          hp: hp,
-          prop: prop,
-          nik: nik,
-          npwp: npwp,
-          pos: pos);
+        token: token,
+        edu: edu,
+        kegiatan: kegiatan,
+        alamat: alamat,
+        telp: telp,
+        hp: hp,
+        prop: prop,
+        nik: nik,
+        npwp: npwp,
+        pos: pos,
+        nameKerabat: nameKerabat,
+        telpKerabat: telpKerabat,
+      );
       emit(DataPesertaUpdated());
       // await Future.delayed(Duration(seconds: 2));
       // if (true) {

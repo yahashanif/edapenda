@@ -40,20 +40,23 @@ class DataPesertaRepository extends BaseRepository {
     // );
   }
 
-  Future<bool> updateDataPeserta(
-      {required String token,
-      required String edu,
-      required String nik,
-      required String kegiatan,
-      required String alamat,
-      required String telp,
-      required String hp,
-      required String prop,
-      required String npwp,
-      required String pos}) async {
+  Future<bool> updateDataPeserta({
+    required String token,
+    required String edu,
+    required String nik,
+    required String kegiatan,
+    required String alamat,
+    required String telp,
+    required String hp,
+    required String prop,
+    required String npwp,
+    required String pos,
+    required String nameKerabat,
+    required String telpKerabat,
+  }) async {
     final body = {
       'no_edu': edu,
-      'keterangan': kegiatan,
+      'kegiatan_pensiun': kegiatan,
       'alamat': alamat,
       'telp': telp,
       'hp': hp,
@@ -61,6 +64,8 @@ class DataPesertaRepository extends BaseRepository {
       'prop': prop,
       'nik': nik,
       'npwp': npwp,
+      'name_kerabat': nameKerabat,
+      'telp_kerabat': telpKerabat,
     };
     print(body);
     final response =

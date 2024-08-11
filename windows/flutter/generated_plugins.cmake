@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   file_selector_windows
+  firebase_core
   liveness_detection_flutter_plugin
   tflite_flutter_plus
   url_launcher_windows

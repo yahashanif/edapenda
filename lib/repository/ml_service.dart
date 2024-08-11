@@ -13,6 +13,7 @@ import 'image_converter.dart';
 class MLService {
   Interpreter? _interpreter;
   double threshold = 0.5;
+  double threshold2 = 0.6;
 
   List _predictedData = [];
   List get predictedData => _predictedData;
@@ -165,6 +166,30 @@ class MLService {
       // print(predictedData);
       currDist = _euclideanDistance(item, predictedData);
       if (currDist <= threshold && currDist < minDist) {
+        minDist = currDist;
+        isRecognized = true;
+      }
+    }
+    print(minDist);
+    return isRecognized;
+  }
+
+  Future<bool> searchResult2(List predictedData) async {
+    // DatabaseHelper _dbHelper = DatabaseHelper.instance;
+
+    // List<User> users = await _dbHelper.queryAllUsers();
+    double minDist = 999;
+    double currDist = 0.0;
+    bool isRecognized = false;
+    // User? predictedResult;
+
+    // print('users.length=> ${users.length}');
+
+    for (var item in dataDummyMatrik) {
+      // print(item);
+      // print(predictedData);
+      currDist = _euclideanDistance(item, predictedData);
+      if (currDist <= threshold2 && currDist < minDist) {
         minDist = currDist;
         isRecognized = true;
       }

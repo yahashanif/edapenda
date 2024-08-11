@@ -2,6 +2,7 @@ import 'package:dapenda/app/constant.dart';
 import 'package:dapenda/app/routes.dart';
 import 'package:dapenda/cubit/image_cubit/current_image_cubit.dart';
 import 'package:dapenda/cubit/pendataan_foto_cubit/pendataan_foto_cubit.dart';
+import 'package:dapenda/cubit/pendataan_foto_matrik_cubit/pendataan_foto_matrik_cubit.dart';
 import 'package:dapenda/cubit/value_pendataan_foto_cubit/value_pendataan_foto_cubit.dart';
 import 'package:dapenda/themes/themes.dart';
 import 'package:dapenda/widgets/box_gap.dart';
@@ -137,6 +138,10 @@ class _PendataanBaruState extends State<PendataanBaru> {
                     context
                         .read<PendataanFotoCubit>()
                         .pendataanFotoGet(token: tokenBox.get('token'));
+
+                    context
+                        .read<PendataanFotoMatrikCubit>()
+                        .getPendataanFotoMatrik(token: tokenBox.get('token'));
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Data Berhasil Upload'),

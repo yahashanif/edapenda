@@ -33,6 +33,7 @@ class _CameraScreenState extends State<PendataanCameraScreen> {
   late faceD.FaceDetector faceDetector;
   List<faceD.Face> faces = [];
   // late Recognizer recognizer;
+  late Future<void> _initializeControllerFuture;
 
   late CameraController controller;
   int index = 1;
@@ -198,6 +199,7 @@ class _CameraScreenState extends State<PendataanCameraScreen> {
     //     performanceMode: faceD.FaceDetectorMode.accurate);
     // faceDetector = faceD.FaceDetector(options: options);
     // recognizer = Recognizer();
+    _initializeControllerFuture = initializeCamera();
   }
 
   @override
@@ -210,7 +212,7 @@ class _CameraScreenState extends State<PendataanCameraScreen> {
       child: Scaffold(
           backgroundColor: Colors.black,
           body: FutureBuilder(
-              future: initializeCamera(),
+              future: _initializeControllerFuture,
               builder: (_, snapshot) {
                 return (snapshot.connectionState == ConnectionState.done)
                     ? Stack(

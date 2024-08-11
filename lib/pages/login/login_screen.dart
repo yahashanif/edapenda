@@ -3,6 +3,7 @@ import 'package:dapenda/app/routes.dart';
 import 'package:dapenda/cubit/auth_cubit/auth_cubit.dart';
 import 'package:dapenda/widgets/box_gap.dart';
 import 'package:dapenda/widgets/custom_button.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +29,17 @@ class _LoginScreenState extends State<LoginScreen> {
       mask: '####-####-####', filter: {"#": RegExp(r'[0-9]')});
 
   bool init = true;
+  String token = '';
+
+  getToken() async {
+    token = (await FirebaseMessaging.instance.getToken())!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     _buildShowDiaolog(BuildContext context) {
@@ -182,18 +194,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     isLoading:
                                                         state is AuthLoading,
                                                     text: "Masuk",
-                                                    onPressed: () {
+                                                    onPressed: () async {
                                                       print(_edu);
                                                       // _edu = _edu.replaceAll(
                                                       //     new RegExp(r'-'), '');
+
                                                       context
                                                           .read<AuthCubit>()
                                                           .login(
                                                               edu: _edu
                                                                   .replaceAll(
                                                                       '-', ''),
-                                                              tokenFcm:
-                                                                  'wahaha');
+                                                              tokenFcm: token);
                                                       init = true;
                                                     }),
                                               ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dapenda/model/cek_otentikasi.dart';
 import 'package:dapenda/model/pendataan_foto.dart';
 import 'package:dapenda/model/peserta_foto_matrik.dart';
 
@@ -26,10 +27,11 @@ class PendataanFotoRepository extends BaseRepository {
 
   Future<PendataanFoto> getPendataanFoto({required String token}) async {
     final response = await get(token: token, service: 'd_peserta_foto/all');
+    print("PENDATAAN FOTO");
     print(response.body);
     if (response.statusCode == 200) {
       return PendataanFoto.fromJson(
-          jsonDecode(response.body)['data']['d_peserta_foto'][0]);
+          jsonDecode(response.body)['data']['d_peserta_foto']);
     } else {
       throw Exception('Failed to load data');
     }

@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:dapenda/app/routes.dart';
 import 'package:dapenda/cubit/auth_cubit/auth_cubit.dart';
 import 'package:dapenda/cubit/berkas_cubit/berkas_cubit.dart';
+import 'package:dapenda/cubit/cek_otentikasi_cubit/cek_otentikasi_cubit.dart';
 import 'package:dapenda/cubit/province_cubit/province_cubit.dart';
 import 'package:dapenda/cubit/berkas_cubit/berkas_ulang_cubit.dart';
 import 'package:dapenda/cubit/data_peserta_cubit/data_peserta_cubit.dart';
 import 'package:dapenda/cubit/faq_cubit/faq_cubit.dart';
 import 'package:dapenda/cubit/value_pendataan_foto_cubit/value_pendataan_foto_cubit.dart';
 import 'package:dapenda/themes/themes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,16 +30,16 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   void initState() {
-    // FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
-    //   if (Platform.isIOS) {
-    //   } else {
-    //     NotificationManager().showNotification(
-    //         title: message!.notification!.title!,
-    //         body: message!.notification!.body!);
-    //     print(message!.data);
-    //   }
-    //   //   // showFlutterNotification(message);
-    // });
+    FirebaseMessaging.onMessage.listen((RemoteMessage? message) {
+      if (Platform.isIOS) {
+      } else {
+        NotificationManager().showNotification(
+            title: message!.notification!.title!,
+            body: message!.notification!.body!);
+        print(message!.data);
+      }
+      //   // showFlutterNotification(message);
+    });
     super.initState();
   }
 
@@ -56,6 +58,7 @@ class _AppState extends State<App> {
         BlocProvider(create: (_) => ProvinceCubit()),
         BlocProvider(create: (_) => PendataanFotoMatrikCubit()),
         BlocProvider(create: (_) => CountOtenticationCubit()),
+        BlocProvider(create: (_) => CekOtentikasiCubit()),
       ],
       child: MaterialApp(
         theme: ThemeData(

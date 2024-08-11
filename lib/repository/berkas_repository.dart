@@ -14,26 +14,16 @@ class BerkasRepository extends BaseRepository {
       // param: param,
       service: 'd_upload_berkas/detail',
     );
+    print("BERKAS DETAIK");
+    print(response.body);
     if (response.statusCode == 200) {
       return Berkas.fromJson(
           jsonDecode(response.body)['data']['d_upload_berkas']);
       // return Berkas.fromJson({
-      //   "message": "blalalala",
-      //   "status": true,
-      //   "alasan": "alasan ya pengen aja",
-      //   "verified": true,
-      //   "data": {
-      //     "no_edu": "EDU12345",
-      //     "name": "Dewi Lestari",
-      //     "penerima": "Agus Pratama",
-      //     "nip": "1987654321",
-      //     "no_pensiun": "1987654321",
-      //     "jenispen": "Pensiun Normal",
-      //     'file1':
-      //         "https://thumbs.dreamstime.com/z/ktp-card-indonesian-identity-card-soppeng-indonesia-august-ktp-card-indonesian-identity-card-white-background-254032470.jpg",
-      //     'file2':
-      //         "https://cdn-2.tstatic.net/batam/foto/bank/images/contoh-kk-yang-sudah-menggunakan-tanda-tangan-elektronik-tte.jpg",
-      //   }
+      //   "status": 2,
+      //   "file_1": "",
+      //   "file_2": "",
+      //   "alasan": "file ktp tidak jelas dan kk juga buram dan bla bla bla"
       // });
     } else {
       throw Exception('Failed to load data');

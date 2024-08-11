@@ -3,9 +3,11 @@ import 'package:dapenda/pages/data_ulang/data_ulang_screen.dart';
 import 'package:dapenda/pages/home/home_screen.dart';
 import 'package:dapenda/pages/login/login_screen.dart';
 import 'package:dapenda/pages/on_boarding/on_boarding_screen.dart';
+import 'package:dapenda/pages/otentikasi/limit_otentikasi_screen.dart';
 import 'package:dapenda/pages/otentikasi/otentikasi_screen.dart';
 import 'package:dapenda/pages/pendataan_foto/pendataan_camera_screen.dart';
 import 'package:dapenda/pages/pendataan_foto/pendataan_foto_screen.dart';
+import 'package:dapenda/pages/petunjuk-otentikasi/petunjuk_foto_screen.dart';
 import 'package:dapenda/pages/recognation/camera_screen.dart';
 import 'package:dapenda/pages/recognation/recognation_screen.dart';
 import 'package:dapenda/pages/unggah_berkas/unggah_screen.dart';
@@ -37,6 +39,10 @@ const String cameraRoute = '/camera';
 
 const String bantuanRoute = '/help';
 
+const String petunjukFotoRoute = '/petunjuk-foto';
+
+const String limitOtentikasiRoute = '/limit-otentikasi';
+
 class AppRoute {
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -51,8 +57,8 @@ class AppRoute {
         return MaterialPageRoute(builder: (context) => const HomeScreen());
       case dataUlangRoute:
         return MaterialPageRoute(builder: (context) => const DataUlangScreen());
-      case unggahBerkasRoute:
-        return MaterialPageRoute(builder: (context) => const UnggahScreen());
+      // case unggahBerkasRoute:
+      //   return MaterialPageRoute(builder: (context) => const UnggahScreen());
       case pendataanFotoRoute:
         return MaterialPageRoute(
             builder: (context) => const PendataanFotoScreen());
@@ -60,8 +66,11 @@ class AppRoute {
         return MaterialPageRoute(
             builder: (context) => const PendataanCameraScreen());
       case recognationRoute:
+        List<double> dataApi = settings.arguments as List<double>;
         return MaterialPageRoute(
-            builder: (context) => const RecognationScreen());
+            builder: (context) => RecognationScreen(
+                  dataAPI: dataApi,
+                ));
       case cameraRoute:
         List<double>? argumen;
         if (settings.arguments != null) {
@@ -77,6 +86,18 @@ class AppRoute {
       case otentikasiRoute:
         return MaterialPageRoute(
             builder: (context) => const OtentikasiScreen());
+      case petunjukFotoRoute:
+        String argumen = settings.arguments as String;
+        return MaterialPageRoute(
+            builder: (context) => PetunjukFotoScreen(
+                  route: argumen,
+                ));
+      case limitOtentikasiRoute:
+        int count = settings.arguments as int;
+        return MaterialPageRoute(
+            builder: (context) => LimitOtenticationScreen(
+                  limit: count,
+                ));
 
       default:
         return MaterialPageRoute(

@@ -70,20 +70,20 @@ class _HomePageState extends State<LivelynessDetectionScreen> {
       isCompleted: false,
     ),
   ];
-  Future<bool> liveness() async {
-    final String? response =
-        await LivenessDetectionFlutterPlugin.instance.livenessDetection(
-      context,
-      config: LivenessConfig(
-        steps: stepLiveness,
-        startWithInfoScreen: false,
-      ),
-    );
-    setState(() {
-      imgPath = response;
-    });
-    return true;
-  }
+  // Future<bool> liveness() async {
+  //   final String? response =
+  //       await LivenessDetectionFlutterPlugin.instance.livenessDetection(
+  //     context,
+  //     config: LivenessConfig(
+  //       steps: stepLiveness,
+  //       startWithInfoScreen: false,
+  //     ),
+  //   );
+  //   setState(() {
+  //     imgPath = response;
+  //   });
+  //   return true;
+  // }
 
   @override
   void initState() {
@@ -94,7 +94,7 @@ class _HomePageState extends State<LivelynessDetectionScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    liveness();
+    // liveness();
   }
 
   @override
@@ -122,18 +122,18 @@ class _HomePageState extends State<LivelynessDetectionScreen> {
               : const SizedBox.shrink(),
           ElevatedButton(
               onPressed: () async {
-                final String? response = await LivenessDetectionFlutterPlugin
-                    .instance
-                    .livenessDetection(
-                  context,
-                  config: LivenessConfig(
-                    steps: stepLiveness,
-                    startWithInfoScreen: false,
-                  ),
-                );
-                setState(() {
-                  imgPath = response;
-                });
+                // final String? response = await LivenessDetectionFlutterPlugin
+                //     .instance
+                //     .livenessDetection(
+                //   context,
+                //   config: LivenessConfig(
+                //     steps: stepLiveness,
+                //     startWithInfoScreen: false,
+                //   ),
+                // );
+                // setState(() {
+                //   imgPath = response;
+                // });
               },
               child: const Text('Sistem Liveness Detection')),
           ElevatedButton(

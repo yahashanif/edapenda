@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:dapenda/app/constant.dart';
 import 'package:dapenda/app/routes.dart';
 import 'package:dapenda/cubit/image_cubit/current_image_cubit.dart';
@@ -11,14 +12,20 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart'
     // ignore: library_prefixes
     as faceD;
 
+import 'package:path/path.dart' as path;
+
 import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
+import '../../main.dart';
 import '../../model/Recognition.dart';
 import '../../repository/Recognizer.dart';
 
 class RecognationScreen extends StatefulWidget {
-  const RecognationScreen({super.key});
+  final List<double> dataAPI;
+
+  const RecognationScreen({super.key, required this.dataAPI});
 
   @override
   State<RecognationScreen> createState() => _RecognationScreenState();
@@ -27,6 +34,7 @@ class RecognationScreen extends StatefulWidget {
 class _RecognationScreenState extends State<RecognationScreen>
     with TickerProviderStateMixin {
   AnimationController? controller;
+  CameraImage? cameraImage;
   CameraController cameraController = CameraController(
     CameraDescription(
       name: "default",
@@ -74,23 +82,53 @@ class _RecognationScreenState extends State<RecognationScreen>
       ),
     )
         .then((value) async {
-      print("value");
-      print(value);
-      if (value != null) {
-        setState(() {
-          imgPath = value;
-          _image = File(imgPath!);
-        });
-        List<double> dataFace = await doFaceDetection();
-        print(dataFace);
+      _cameraImageToInputImage(value!);
 
-        Future.delayed(Duration(seconds: 2)).then((value) {
-          Navigator.pushReplacementNamed(context, cameraRoute,
-              arguments: dataFace);
-        });
-      } else {
-        Navigator.pop(context);
-      }
+      MLService().searchResult2(widget.dataAPI).then((dataFoto) {
+        if (dataFoto) {
+          Future.delayed(const Duration(seconds: 2)).then((value) {
+            dataDummyMatrik.clear();
+            Navigator.pushReplacementNamed(context, cameraRoute,
+                arguments: value);
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Wajah Tidak Sesuai\n Coba lagi"),
+          ));
+          Navigator.pop(context);
+        }
+      });
+      // dataDummyMatrik.clear();
+      // print("value");
+      // print(value);
+      // if (value != null) {
+      //   setState(() {
+      //     cameraImage = value;
+      //     // _image = File(imgPath!);
+      //   });
+      //   List<double> dataFace = await doFaceDetection();
+      //   print(dataFace);
+      //   dataDummyMatrik.add(dataFace);
+      //   print("dataDummyMatrik");
+      //   print(dataDummyMatrik);
+      //   print(widget.dataAPI);
+
+      // MLService().searchResult(widget.dataAPI).then((value) {
+      // if (value) {
+      //   Future.delayed(const Duration(seconds: 2)).then((value) {
+      //     dataDummyMatrik.clear();
+      //     Navigator.pushReplacementNamed(context, cameraRoute,
+      //         arguments: dataFace);
+      //   });
+      // } else {
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     content: Text("Wajah Tidak Sesuai\n Coba lagi"),
+      //   ));
+      // }
+      // });
+      // } else {
+      //   Navigator.pop(context);
+      // }
     });
 
     // print(response);
@@ -182,7 +220,10 @@ class _RecognationScreenState extends State<RecognationScreen>
                         // decoration: BoxDecoration(
                         //     color: Colors.green.withOpacity(0.65),
                         //     borderRadius: BorderRadius.circular(8)),
-                        child: Text(
+                        child:
+                            // Image.file(_image!)
+
+                            Text(
                           _buildLoadingText((animation!.value / 2).toInt()),
                           style: TextStyle(
                             fontSize: 20,
@@ -217,23 +258,23 @@ class _RecognationScreenState extends State<RecognationScreen>
 
     print("Rect " + boundingBox.toString());
 
-    num left = boundingBox.left < 0 ? 0 : boundingBox.left;
-    num top = boundingBox.top < 0 ? 0 : boundingBox.top;
-    num right =
-        boundingBox.right > image.width ? image.width - 1 : boundingBox.right;
-    num bottom = boundingBox.bottom > image.height
-        ? image.height - 1
-        : boundingBox.bottom;
-    num width = right - left;
-    num height = bottom - top;
+    double x = boundingBox.left - 10.0;
+    double y = boundingBox.top - 10.0;
+    double w = boundingBox.width + 10.0;
+    double h = boundingBox.height + 10.0;
 
     final bytes = _image!.readAsBytesSync();
     img.Image? faceImg = img.decodeImage(bytes);
-    img.Image? croppedFace = img.copyCrop(
-        faceImg!, left.toInt(), top.toInt(), width.toInt(), height.toInt());
+    img.Image? croppedFace =
+        img.copyCrop(faceImg!, x.toInt(), y.toInt(), w.toInt(), h.toInt());
+
+    img.Image imgData = img.copyResizeCropSquare(croppedFace, 112);
 
     List<double> recog = await MLService()
-        .setCurrentPredictionFile(croppedFace, interpreter: _interpreter!);
+        .setCurrentPredictionFile(imgData!, interpreter: _interpreter!);
+
+    // _image = await writeImageToFile(
+    //     Uint8List.fromList(img.encodeBmp(imgData)), "test");
 
     return recog;
     // showFaceRegistrationDialogue(
@@ -243,5 +284,135 @@ class _RecognationScreenState extends State<RecognationScreen>
     // drawRectangleAroundFaces();
 
     //TODO call the method to perform face recognition on detected faces
+  }
+
+//   Future<File> writeImageToFile(Uint8List imageData, String fileName) async {
+//     // Mendapatkan direktori sementara (temporary directory)
+//     final directory = await getTemporaryDirectory();
+
+//     // Membuat path lengkap untuk file baru
+//     final filePath = path.join(directory.path, fileName);
+
+//     // Membuat file baru dan menulis imageData ke dalamnya
+//     final file = File(filePath);
+//     await file.writeAsBytes(imageData);
+
+//     return file;
+//   }
+
+  Future<void> _cameraImageToInputImage(CameraImage cameraImage) async {
+    final WriteBuffer allBytes = WriteBuffer();
+    for (final Plane plane in cameraImage.planes) {
+      allBytes.putUint8List(plane.bytes);
+    }
+    final bytes = allBytes.done().buffer.asUint8List();
+
+    final Size imageSize =
+        Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
+    final imageRotation = InputImageRotationValue.fromRawValue(
+      cameras[1].sensorOrientation,
+    );
+    final inputImageFormat = InputImageFormatValue.fromRawValue(
+      cameraImage.format.raw,
+    );
+
+    final planeData = cameraImage.planes.map(
+      (Plane plane) {
+        return InputImagePlaneMetadata(
+          bytesPerRow: plane.bytesPerRow,
+          height: plane.height,
+          width: plane.width,
+        );
+      },
+    ).toList();
+
+    final inputImageData = InputImageData(
+      size: imageSize,
+      imageRotation: imageRotation!,
+      inputImageFormat: inputImageFormat!,
+      planeData: planeData,
+    );
+    final inputImage = InputImage.fromBytes(
+      bytes: bytes,
+      inputImageData: inputImageData,
+    );
+
+    // if (dataDummyMatrik.isEmpty) {
+    await Future.delayed(const Duration(seconds: 3)).then((value) async {
+      Face face = await _processImage(inputImage);
+
+      MLService()
+          .setCurrentPrediction(cameraImage, face, interpreter: _interpreter!)
+          .then((result) {
+        print("result");
+        print(result);
+
+        dataDummyMatrik.add(result);
+
+        // dataDummyMatrik.add(result);
+        // context.read<ValuePendataanFotoCubit>().setValue(result);
+      });
+      setState(() {});
+    });
+    // img.Image dataImage = MLService().convertCameraImage(cameraImage);
+
+    // var dataFile = await saveImageToFile(dataImage, DateTime.now().toString());
+    // ignore: use_build_context_synchronously
+    context.read<CurrentImageCubit>().setXFile(null);
+    // } else {
+    //   controller.stopImageStream();
+    // }
+    Navigator.pop(context);
+
+    setState(() {});
+  }
+
+  Future<Face> _processImage(InputImage inputImage) async {
+    // if (_isProcessing) return;
+    // setState(() {
+    //   _isProcessing = true;
+    // });
+
+    final faces =
+        await MachineLearningHelper.instance.processInputImage(inputImage);
+    print(faces.length);
+
+    if (faces.isEmpty) {
+      dataDummyMatrik.clear();
+      print("NO FACES");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Tidak ada wajah yang terdeteksi\n Coba lagi")));
+      Navigator.pop(context);
+      throw Exception('Face is null');
+    } else {
+      final firstFace = faces.first;
+
+      // if (dataDummyMatrik.length > 20) {
+      //   _isProcessing = false;
+      //   controller.stopImageStream();
+      //   setState(() {});
+      //   // return;
+      // }
+
+      // await Future.delayed(const Duration(microseconds: 20))
+      //     .then((value) async {
+      //   try {
+      //     final XFile imageFile = await controller.takePicture();
+      //     // List<double> dataTemp = await getRecog(File(imageFile.path));
+      //     // dataTemp2.add(dataTemp[0]);
+      //     // dataDummyMatrik.add(dataTemp);
+      //     // final hasil = Recognizer2().findNearest2(widget.embedding);
+      //     // textCheck = hasil.distance < 0.1 ? "Dikenali" : "Tidak Dikenali";
+      //     setState(() {});
+      //   } catch (e) {
+      //     print('Error taking picture: $e');
+      //   } finally {
+      //     setState(() {
+      //       _isProcessing = false;
+      //     });
+      //   }
+      // });
+      return firstFace;
+    }
   }
 }
