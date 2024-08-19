@@ -28,6 +28,8 @@ class DataPeserta {
   final String? nmBankPeserta;
   final String? noRekPeserta;
   final String? nmRekPeserta;
+  final String? nameKerabat;
+  final String? telpKerabat;
 
   DataPeserta({
     this.nip,
@@ -48,6 +50,8 @@ class DataPeserta {
     this.nmBankPeserta,
     this.noRekPeserta,
     this.nmRekPeserta,
+    this.nameKerabat,
+    this.telpKerabat,
   });
 
   factory DataPeserta.fromJson(Map<String, dynamic> json) => DataPeserta(
@@ -69,6 +73,8 @@ class DataPeserta {
         nmBankPeserta: json["nm_bank_peserta"],
         noRekPeserta: json["no_rek_peserta"],
         nmRekPeserta: json["nm_rek_peserta"],
+        nameKerabat: json["name_kerabat"],
+        telpKerabat: json["telp_kerabat"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -90,5 +96,7 @@ class DataPeserta {
         "nm_bank_peserta": nmBankPeserta,
         "no_rek_peserta": noRekPeserta,
         "nm_rek_peserta": nmRekPeserta,
+        "name_kerabat": nameKerabat,
+        "telp_kerabat": telpKerabat,
       };
 }

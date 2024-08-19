@@ -152,9 +152,11 @@ class _CameraScreenState extends State<CameraScreen> {
     if (faces.isEmpty) {
       dataDummyMatrik.clear();
       print("NO FACES");
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Tidak ada wajah yang terdeteksi\n Coba lagi")));
-      Navigator.pop(context);
       throw Exception('Face is null');
     } else {
       final firstFace = faces.first;

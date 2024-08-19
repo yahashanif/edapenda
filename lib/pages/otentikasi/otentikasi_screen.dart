@@ -130,7 +130,7 @@ class _OtentikasiScreenState extends State<OtentikasiScreen> {
         },
         builder: (context, cekOtentikasiState) {
           print(cekOtentikasiState);
-          if (cekOtentikasiState is CekOtentikasiLoading) {
+          if (cekOtentikasiState is CekOtentikasiLoading && dataFoto != null) {
             return Center(
               child: ColorChangingProgressIndicator(),
             );
@@ -295,8 +295,16 @@ class _OtentikasiScreenState extends State<OtentikasiScreen> {
                                         ? null
                                         : () {
                                             _resetAll();
+
+                                            // Memisahkan string berdasarkan koma dan mengonversi menjadi List<double>
+                                            List<double> numbers = inputData
+                                                .split(",")
+                                                .map((e) => double.parse(e))
+                                                .toList();
+                                            print(numbers);
                                             Navigator.pushNamed(
-                                                context, recognationRoute);
+                                                context, recognationRoute,
+                                                arguments: numbers);
                                           },
                               ),
                             ),

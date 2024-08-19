@@ -11,8 +11,41 @@ class DataPesertaRepository extends BaseRepository {
     );
     print(response.body);
     if (response.statusCode == 200) {
+      String jsonString = '''
+    {
+      "message": "success",
+      "data": {
+        "d_pensiunan": {
+          "nm_penerima_mp": "",
+          "no_edu": "196406223993",
+          "sts_kel_akhir": "Duda",
+          "sts_mp": "Sendiri",
+          "alamat":
+              "Jl. Karya Bakti No. 37 LK VII Medan Kel. Pangkalan Mansyur Kec. Medan Johor Kota Medan",
+          "kd_prop": "1",
+          "kode_pos": "20143",
+          "no_telp": "082290342356",
+          "no_hp": "082290342356",
+          "npwp": "1384646464",
+          "nik": "13070102030000046",
+          "tempat_lahir": "",
+          "tgl_lahir": "2006-01-01",
+          "nm_bank_peserta": "Bank Mandiri KC Medan Imam Bonjol",
+          "no_rek_peserta": "105-00-0435843-2",
+          "nm_rek_peserta": "Suparlan",
+          "kegiatan_pensiun": "tidur",
+          "jns_pensiun": "Pensiun Normal",
+          "nip": "20000790",
+          "name_kerabat": "hanif",
+          "telp_kerabat": "082290342356"
+        }
+      }
+    }
+  ''';
       return DataPeserta.fromJson(
           jsonDecode(response.body)['data']['d_pensiunan']);
+      // return DataPeserta.fromJson(
+      //     jsonDecode(jsonString)['data']['d_pensiunan']);
     } else {
       throw Exception('Failed to load data');
     }

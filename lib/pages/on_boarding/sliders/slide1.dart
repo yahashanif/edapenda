@@ -23,6 +23,9 @@ class Slide1 extends StatelessWidget {
           alignment: Alignment.center,
           child: Column(
             children: <Widget>[
+              const BoxGap(
+                height: 40,
+              ),
               Container(
                 margin: EdgeInsets.only(
                     top: getActualY(y: 150, context: context),
