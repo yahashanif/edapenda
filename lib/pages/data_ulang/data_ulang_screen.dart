@@ -1115,7 +1115,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                 'kk',
                                                                 'ktp',
                                                                 'npwp',
-                                                                'menikah'
+                                                                'surat_keterangan_belum_menikah'
                                                               ],
                                                                   files: [
                                                                 fileKTP,
@@ -1199,8 +1199,8 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                             'token'),
                                                                     keys: [
                                                                   'kk'
-                                                                      'kuliah',
-                                                                  'bekerja',
+                                                                      'surat_keterangan_masih_kuliah',
+                                                                  'surat_keterangan_belum_bekerja',
                                                                 ],
                                                                     files: [
                                                                   filekk,
@@ -1284,8 +1284,8 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                     keys: [
                                                                   'ktp'
                                                                       'kk'
-                                                                      'kuliah',
-                                                                  'bekerja',
+                                                                      'surat_keterangan_masih_kuliah',
+                                                                  'surat_keterangan_belum_bekerja',
                                                                 ],
                                                                     files: [
                                                                   fileKTP,

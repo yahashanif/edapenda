@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../app/constant.dart';
 import '../../model/data_auth.dart';
@@ -12,6 +17,11 @@ class DetailProfil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Uint8List? bytes;
+    PickedFile? imageData;
+    if (user.urlFoto != null) {
+      bytes = base64Decode(user.urlFoto!);
+    }
     return Container(
       margin: EdgeInsets.only(bottom: getActualY(y: 8, context: context)),
       padding: const EdgeInsets.all(16),
@@ -71,19 +81,17 @@ class DetailProfil extends StatelessWidget {
               )
             ],
           ),
-          Container(
-            width: getActualX(x: 80, context: context),
-            height: getActualY(y: 80, context: context),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              image: DecorationImage(
-                image: NetworkImage(
-                  user.urlFoto ?? '',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          )
+          bytes == null
+              ? Container()
+              : Container(
+                  height: 80,
+                  width: 80,
+                  child: Image.memory(
+                    bytes!,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width * 0.5,
+                  ),
+                )
         ],
       ),
     );
