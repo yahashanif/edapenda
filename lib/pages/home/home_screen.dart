@@ -339,6 +339,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context
                                     .read<BerkasUlangCubit>()
                                     .setValue(false);
+                                // context.read<DataPesertaCubit>().getDataPeserta(
+                                //     token: tokenBox.get('token'));
                                 Navigator.pushNamed(context, dataUlangRoute);
                               },
                               // state is BerkasLoaded

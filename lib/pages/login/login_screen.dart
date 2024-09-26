@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   getToken() async {
     token = (await FirebaseMessaging.instance.getToken())!;
+    print(token);
   }
 
   @override
@@ -195,7 +196,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         state is AuthLoading,
                                                     text: "Masuk",
                                                     onPressed: () async {
+                                                      token =
+                                                          (await FirebaseMessaging
+                                                              .instance
+                                                              .getToken())!;
                                                       print(_edu);
+                                                      print(token);
                                                       // _edu = _edu.replaceAll(
                                                       //     new RegExp(r'-'), '');
 

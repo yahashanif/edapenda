@@ -60,7 +60,10 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<bool> initializeCamera() async {
     dataDummyMatrik.clear();
     var cameras = await availableCameras();
-    controller = CameraController(cameras[index], ResolutionPreset.medium);
+    controller = CameraController(
+        cameras[index],
+        imageFormatGroup: ImageFormatGroup.yuv420,
+        ResolutionPreset.low);
     await controller.initialize();
     await controller.startImageStream((image) async {
       // Future.delayed(Duration(seconds: 2)).then((value) {});
@@ -83,32 +86,35 @@ class _CameraScreenState extends State<CameraScreen> {
 
     final Size imageSize =
         Size(cameraImage.width.toDouble(), cameraImage.height.toDouble());
-    final imageRotation = InputImageRotationValue.fromRawValue(
-      cameras[index].sensorOrientation,
-    );
     final inputImageFormat = InputImageFormatValue.fromRawValue(
       cameraImage.format.raw,
+    );
+    final imageRotation = InputImageRotationValue.fromRawValue(
+      cameras[index].sensorOrientation,
     );
 
     final planeData = cameraImage.planes.map(
       (Plane plane) {
-        return InputImagePlaneMetadata(
+        return InputImageMetadata(
           bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
+          size: Size(plane.width == null ? 0 : plane.width!.toDouble(),
+              plane.height == null ? 0 : plane.height!.toDouble()),
+          rotation: imageRotation!,
+          format: inputImageFormat!,
         );
       },
     ).toList();
 
-    final inputImageData = InputImageData(
+    final inputImageData = InputImageMetadata(
       size: imageSize,
-      imageRotation: imageRotation!,
-      inputImageFormat: inputImageFormat!,
-      planeData: planeData,
+      rotation: imageRotation!,
+      format: inputImageFormat!,
+      bytesPerRow: planeData.first.bytesPerRow,
     );
+
     final inputImage = InputImage.fromBytes(
       bytes: bytes,
-      inputImageData: inputImageData,
+      metadata: inputImageData,
     );
 
     // if (dataDummyMatrik.isEmpty) {

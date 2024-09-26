@@ -14,6 +14,7 @@ class DataPeserta {
   final String? jnsPensiun;
   final String? noEdu;
   final String? nmPenerimaMp;
+  final String? stsMp;
   final String? stsKelAkhir;
   final String? alamat;
   final String? kdProp;
@@ -36,6 +37,7 @@ class DataPeserta {
     this.jnsPensiun,
     this.noEdu,
     this.nmPenerimaMp,
+    this.stsMp,
     this.stsKelAkhir,
     this.alamat,
     this.kdProp,
@@ -59,6 +61,7 @@ class DataPeserta {
         jnsPensiun: json["jns_pensiun"],
         noEdu: json["no_edu"],
         nmPenerimaMp: json["nm_penerima_mp"],
+        stsMp: json["sts_mp"],
         stsKelAkhir: json["sts_kel_akhir"],
         alamat: json["alamat"],
         kdProp: json["kd_prop"],

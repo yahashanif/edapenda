@@ -82,7 +82,7 @@ class DataPesertaRepository extends BaseRepository {
     required String telp,
     required String hp,
     required String prop,
-    required String npwp,
+    String npwp = '',
     required String pos,
     required String nameKerabat,
     required String telpKerabat,
@@ -100,9 +100,13 @@ class DataPesertaRepository extends BaseRepository {
       'name_kerabat': nameKerabat,
       'telp_kerabat': telpKerabat,
     };
+    print("body");
     print(body);
     final response =
         await post(service: 'd_pensiunan/update', token: token, body: body);
+    print("response.body");
+    print(response.statusCode);
+    print(response.statusCode != 200);
     if (response.statusCode != 200) {
       return false;
     } else {

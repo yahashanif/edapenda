@@ -35,14 +35,14 @@ class _RecognationScreenState extends State<RecognationScreen>
     with TickerProviderStateMixin {
   AnimationController? controller;
   CameraImage? cameraImage;
-  CameraController cameraController = CameraController(
-    CameraDescription(
-      name: "default",
-      lensDirection: CameraLensDirection.front,
-      sensorOrientation: 90,
-    ),
-    ResolutionPreset.high,
-  );
+  // CameraController cameraController = CameraController(
+  //   CameraDescription(
+  //     name: "default",
+  //     lensDirection: CameraLensDirection.front,
+  //     sensorOrientation: 90,
+  //   ),
+  //   ResolutionPreset.high,
+  // );
   Animation<double>? animation;
   File? _image;
   String? imgPath;
@@ -159,10 +159,12 @@ class _RecognationScreenState extends State<RecognationScreen>
 
     Future(() {
       liveness().then((value) async {
+        print("VALUE WAWAWAWA");
+        print(value);
         if (value == false) {
           Navigator.pop(context);
-          cameraController.dispose();
-          cameraController.stopImageStream();
+          // cameraController.dispose();
+          // cameraController.stopImageStream();
         }
         setState(() {});
       });
@@ -172,8 +174,8 @@ class _RecognationScreenState extends State<RecognationScreen>
   @override
   void dispose() {
     controller?.dispose();
-    cameraController.dispose();
-    cameraController.stopImageStream();
+    // cameraController.dispose();
+    // cameraController.stopImageStream();
     super.dispose();
   }
 
@@ -187,8 +189,8 @@ class _RecognationScreenState extends State<RecognationScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        cameraController.dispose();
-        cameraController.stopImageStream();
+        // cameraController.dispose();
+        // cameraController.stopImageStream();
         return true;
       },
       child: Scaffold(
@@ -318,23 +320,26 @@ class _RecognationScreenState extends State<RecognationScreen>
 
     final planeData = cameraImage.planes.map(
       (Plane plane) {
-        return InputImagePlaneMetadata(
+        return InputImageMetadata(
           bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
+          size: Size(plane.width == null ? 0 : plane.width!.toDouble(),
+              plane.height == null ? 0 : plane.height!.toDouble()),
+          rotation: imageRotation!,
+          format: inputImageFormat!,
         );
       },
     ).toList();
 
-    final inputImageData = InputImageData(
+    final inputImageData = InputImageMetadata(
       size: imageSize,
-      imageRotation: imageRotation!,
-      inputImageFormat: inputImageFormat!,
-      planeData: planeData,
+      rotation: imageRotation!,
+      format: inputImageFormat!,
+      bytesPerRow: planeData.first.bytesPerRow,
     );
+
     final inputImage = InputImage.fromBytes(
       bytes: bytes,
-      inputImageData: inputImageData,
+      metadata: inputImageData,
     );
 
     // if (dataDummyMatrik.isEmpty) {

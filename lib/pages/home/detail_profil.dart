@@ -81,7 +81,7 @@ class DetailProfil extends StatelessWidget {
               )
             ],
           ),
-          bytes == null
+          bytes!.isEmpty
               ? Container()
               : Container(
                   height: 80,

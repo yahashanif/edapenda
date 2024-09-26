@@ -81,6 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 Text(
                   'Dana Pensiun Angkasa Pura II',
+                  textAlign: TextAlign.center,
                   style: tahomaB.copyWith(
                     fontSize: getActualY(y: 20, context: context),
                     color: const Color(0XFF707070),

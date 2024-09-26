@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dapenda/app/constant.dart';
+import 'package:dapenda/cubit/auth_cubit/auth_cubit.dart';
 import 'package:dapenda/cubit/data_peserta_cubit/data_peserta_cubit.dart';
 import 'package:dapenda/model/province.dart';
 import 'package:dapenda/widgets/base_appbar.dart';
@@ -30,6 +31,7 @@ class DataUlangScreen extends StatefulWidget {
 
 class _DataUlangScreenState extends State<DataUlangScreen> {
   Box tokenBox = Hive.box('token');
+  String name = '';
 
   PickedFile? ktp;
   PickedFile? kk;
@@ -87,6 +89,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
   void initState() {
     super.initState();
     var dataState = context.read<DataPesertaCubit>().state;
+    var authState = context.read<AuthCubit>().state;
     if (dataState is DataPesertaSuccess) {
       noedu = dataState.data.noEdu;
       alamatTempatTinggalController.text = dataState.data.alamat ?? '';
@@ -109,6 +112,9 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
       valueProp = provinceState.province.firstWhere(
           (element) => element.kdProp == kdProp,
           orElse: () => provinceState.province.first);
+    }
+    if (authState is AuthSuccess) {
+      name = authState.user.nmPeserta ?? '';
     }
   }
 
@@ -162,29 +168,43 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
             child: Align(
                 alignment: Alignment.center,
                 child: image != null || imageBase64 != null
-                    ? imageBase64 != null
+                    ? imageBase64 == ''
                         ? Container(
                             decoration: DottedDecoration(
                                 shape: Shape.box,
                                 color: blue,
                                 borderRadius: BorderRadius.circular(8)),
-                            child: Image.memory(
-                              bytes!,
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.width * 0.5,
-                            ),
+                            // child: Image.memory(
+                            //   bytes!,
+                            //   width: MediaQuery.of(context).size.width,
+                            //   height: MediaQuery.of(context).size.width * 0.5,
+                            // ),
                           )
-                        : Container(
-                            decoration: DottedDecoration(
-                                shape: Shape.box,
-                                color: blue,
-                                borderRadius: BorderRadius.circular(8)),
-                            child: Image.file(
-                              File(image!.path),
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.width * 0.5,
-                            ),
-                          )
+                        : imageBase64 != null
+                            ? Container(
+                                decoration: DottedDecoration(
+                                    shape: Shape.box,
+                                    color: blue,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Image.memory(
+                                  bytes!,
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                ),
+                              )
+                            : Container(
+                                decoration: DottedDecoration(
+                                    shape: Shape.box,
+                                    color: blue,
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Image.file(
+                                  File(image!.path),
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                ),
+                              )
                     : Container(
                         padding: EdgeInsets.symmetric(
                             horizontal: getActualX(x: 16, context: context),
@@ -237,13 +257,17 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                           });
                         }),
                     WidgetImage(
-                        title: "Berkas Foto NPWP",
+                        title:
+                            "Berkas Foto NPWP Jika Ada, foto NPWP tidak Mandatori",
                         image: berkasUlang ? null : npwp,
                         imageBase64: berkasUlang ? null : state.berkas.npwp,
                         onTap: () {
-                          setState(() async {
-                            npwp = await getImage();
-                          });
+                          if (berkasUlang) {
+                          } else {
+                            setState(() async {
+                              npwp = await getImage();
+                            });
+                          }
                         }),
                   ],
                 );
@@ -284,7 +308,8 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                           });
                         }),
                     WidgetImage(
-                        title: "Berkas Foto NPWP",
+                        title:
+                            "Berkas Foto NPWP Jika Ada, foto NPWP tidak Mandatori",
                         image: berkasUlang ? null : npwp,
                         imageBase64: berkasUlang ? null : state.berkas.npwp,
                         onTap: () {
@@ -299,9 +324,12 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                             ? null
                             : state.berkas.suratKeteranganBelumMenikah,
                         onTap: () {
-                          setState(() async {
-                            menikah = await getImage();
-                          });
+                          if (berkasUlang) {
+                          } else {
+                            setState(() async {
+                              menikah = await getImage();
+                            });
+                          }
                         }),
                   ],
                 );
@@ -397,20 +425,27 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
       ),
       body: SingleChildScrollView(
         child: BlocConsumer<BerkasCubit, BerkasState>(
-          listener: (context, berkasState) {
-            if (berkasState is BerkasFailed) {
+          listener: (context, stateBerkas) {
+            print("berkasState");
+            print(stateBerkas);
+            if (stateBerkas is BerkasFailed) {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(berkasState.error)));
+                  .showSnackBar(SnackBar(content: Text(stateBerkas.error)));
             }
             // TODO: implement listener
-            if (berkasState is BerkasPosted) {
+            if (stateBerkas is BerkasPosted) {
               context
                   .read<BerkasCubit>()
                   .getBerkas(token: tokenBox.get('token'));
             }
           },
           builder: (context, berkasState) {
+            print("berkasState");
             print(berkasState);
+            if (berkasState is BerkasFailed) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(berkasState.error)));
+            }
             return Column(
               children: [
                 BlocBuilder<BerkasUlangCubit, bool>(
@@ -508,12 +543,20 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                 ),
                 BlocConsumer<DataPesertaCubit, DataPesertaState>(
                   listener: (context, state) {
+                    print("state");
                     print(state);
                     if (state is DataPesertaSuccess) {
                       print("kdProp");
                       print(kdProp);
                     }
                     if (state is DataPesertaUpdated) {
+                      context
+                          .read<DataPesertaCubit>()
+                          .getDataPeserta(token: tokenBox.get('token'));
+                    }
+                    if (state is DataPesertaFailed) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.error)));
                       context
                           .read<DataPesertaCubit>()
                           .getDataPeserta(token: tokenBox.get('token'));
@@ -546,7 +589,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 32,
                               ),
                               Text(
-                                'Saya',
+                                name,
                                 style: tahomaB.copyWith(
                                   fontSize: getActualY(y: 16, context: context),
                                   color: Colors.black,
@@ -560,12 +603,13 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 value: state.data.nmPenerimaMp,
                               ),
                               TextRapi(
-                                data: 'Nomor e-DU',
-                                value: state.data.noEdu,
+                                data: 'Nopen',
+                                value: state.data.noEdu!
+                                    .substring(state.data.noEdu!.length - 4),
                               ),
                               TextRapi(
-                                data: 'Jenis Pensiun',
-                                value: state.data.jnsPensiun,
+                                data: 'Status MP',
+                                value: state.data.stsMp,
                               ),
                               TextRapi(
                                 data: 'Tempat, Tanggal Lahir',
@@ -780,7 +824,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 16,
                               ),
                               Text(
-                                'NIK',
+                                'NIK Sesuai KTP',
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
@@ -810,7 +854,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 16,
                               ),
                               Text(
-                                'NPWP',
+                                'NPWP Jika Ada',
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
@@ -820,8 +864,6 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 8,
                               ),
                               TextFormField(
-                                validator: validator,
-
                                 controller: npwpController,
                                 keyboardType: TextInputType.number,
                                 // onSaved: (val) => _notelp = val,
@@ -918,25 +960,8 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                               const BoxGap(
                                 height: 16,
                               ),
-                              TextRapi(
-                                data: 'a.\tNama Penerima Pensiun',
-                                value: state.data.nmPenerimaMp,
-                              ),
-                              TextRapi(
-                                data: '\t\t\t\tTempat, Tanggal Lahir',
-                                value: state.data.tempatLahir! +
-                                    ", " +
-                                    state.data.tglLahir.toString(),
-                              ),
-                              TextRapi(
-                                data: '\t\t\t\tNomor Pensiunan',
-                                value: state.data.nip,
-                              ),
-                              const BoxGap(
-                                height: 16,
-                              ),
                               Text(
-                                'b.\tUntuk pembayaran Manfaat Pensiun bulanan,\n\t\t\t\tmohon ditransfer ke:',
+                                'Untuk pembayaran Manfaat Pensiun bulanan,\n\t\t\t\tmohon ditransfer ke:',
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
@@ -950,7 +975,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 ),
                               ),
                               Text(
-                                "\t\t\t\t${state.data.noRekPeserta} ",
+                                "\t\t\t\t${state.data.noRekPeserta} \t\t\t Atas Nama ${state.data.nmRekPeserta}",
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
@@ -960,7 +985,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 32,
                               ),
                               Text(
-                                'Demikian pernyataan ini saya buat\ndengan sebenarnya, harap dapat dimaklumi. :',
+                                'Demikian Pernyataan Ini Saya Buat\nDengan Sebenernya, Sebagai Pemenuhan Kewajiban Kepada DAPENDA',
                                 style: tahomaB.copyWith(
                                   fontSize: getActualY(y: 16, context: context),
                                   color: Colors.black,
@@ -1047,7 +1072,6 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                               "Duda") {
                                                         if (kk == null ||
                                                             ktp == null ||
-                                                            npwp == null ||
                                                             menikah == null) {
                                                           ScaffoldMessenger.of(
                                                                   context)
@@ -1058,7 +1082,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                               .red,
                                                                       content:
                                                                           Text(
-                                                                        "Kolom Berkas KK, Berkas KTP, Berkas NPWP dan Berkas Surat Keterangan Belum Menikah tidak boleh kosong",
+                                                                        "Kolom Berkas KK, Berkas KTP dan Berkas Surat Keterangan Belum Menikah tidak boleh kosong",
                                                                         style: tahomaR.copyWith(
                                                                             color:
                                                                                 Colors.white),
@@ -1084,8 +1108,11 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                   .kdProp!,
                                                               nik: nikController
                                                                   .text,
-                                                              npwp:
-                                                                  npwpController
+                                                              npwp: npwpController
+                                                                      .text
+                                                                      .isEmpty
+                                                                  ? ''
+                                                                  : npwpController
                                                                       .text,
                                                               pos:
                                                                   kdPosController
@@ -1100,29 +1127,52 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                               File(ktp!.path);
                                                           var fileKK =
                                                               File(kk!.path);
-                                                          var fileNPWP =
-                                                              File(npwp!.path);
+
                                                           var filemenikah =
                                                               File(menikah!
                                                                   .path);
-                                                          context
-                                                              .read<
-                                                                  BerkasCubit>()
-                                                              .postBerkas(
-                                                                  token: tokenBox
-                                                                      .get('token'),
-                                                                  keys: [
-                                                                'kk',
-                                                                'ktp',
-                                                                'npwp',
-                                                                'surat_keterangan_belum_menikah'
-                                                              ],
-                                                                  files: [
-                                                                fileKTP,
-                                                                fileKK,
-                                                                fileNPWP,
-                                                                filemenikah
-                                                              ]);
+                                                          if (npwp == null) {
+                                                            context
+                                                                .read<
+                                                                    BerkasCubit>()
+                                                                .postBerkas(
+                                                                    token: tokenBox
+                                                                        .get(
+                                                                            'token'),
+                                                                    keys: [
+                                                                  'kk',
+                                                                  'ktp',
+                                                                  // 'npwp',
+                                                                  'surat_keterangan_belum_menikah'
+                                                                ],
+                                                                    files: [
+                                                                  fileKTP,
+                                                                  fileKK,
+                                                                  // fileNPWP,
+                                                                  filemenikah
+                                                                ]);
+                                                          } else {
+                                                            var fileNPWP = File(
+                                                                npwp!.path);
+                                                            context
+                                                                .read<
+                                                                    BerkasCubit>()
+                                                                .postBerkas(
+                                                                    token: tokenBox
+                                                                        .get('token'),
+                                                                    keys: [
+                                                                  'kk',
+                                                                  'ktp',
+                                                                  'npwp',
+                                                                  'surat_keterangan_belum_menikah'
+                                                                ],
+                                                                    files: [
+                                                                  fileKTP,
+                                                                  fileKK,
+                                                                  fileNPWP,
+                                                                  filemenikah
+                                                                ]);
+                                                          }
                                                         }
                                                       } else if (state.data
                                                               .stsKelAkhir ==
@@ -1297,8 +1347,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                         }
                                                       } else {
                                                         if (kk == null ||
-                                                            ktp == null ||
-                                                            npwp == null) {
+                                                            ktp == null) {
                                                           ScaffoldMessenger.of(
                                                                   context)
                                                               .showSnackBar(
@@ -1308,7 +1357,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                               .red,
                                                                       content:
                                                                           Text(
-                                                                        "Kolom Berkas KK, Berkas KTP dan Berkas NPWP tidak boleh kosong",
+                                                                        "Kolom Berkas KK dan Berkas KTP  tidak boleh kosong",
                                                                         style: tahomaR.copyWith(
                                                                             color:
                                                                                 Colors.white),
@@ -1351,24 +1400,45 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                             File(ktp!.path);
                                                         var fileKK =
                                                             File(kk!.path);
-                                                        var fileNPWP =
-                                                            File(npwp!.path);
-                                                        context
-                                                            .read<BerkasCubit>()
-                                                            .postBerkas(
-                                                                token: tokenBox
-                                                                    .get(
-                                                                        'token'),
-                                                                keys: [
-                                                              'kk',
-                                                              'ktp',
-                                                              'npwp'
-                                                            ],
-                                                                files: [
-                                                              fileKTP,
-                                                              fileKK,
-                                                              fileNPWP
-                                                            ]);
+
+                                                        if (npwp == null) {
+                                                          context
+                                                              .read<
+                                                                  BerkasCubit>()
+                                                              .postBerkas(
+                                                                  token: tokenBox
+                                                                      .get(
+                                                                          'token'),
+                                                                  keys: [
+                                                                'kk',
+                                                                'ktp',
+                                                                // 'npwp'
+                                                              ],
+                                                                  files: [
+                                                                fileKTP,
+                                                                fileKK,
+                                                                // fileNPWP
+                                                              ]);
+                                                        } else {
+                                                          var fileNPWP =
+                                                              File(npwp!.path);
+                                                          context
+                                                              .read<
+                                                                  BerkasCubit>()
+                                                              .postBerkas(
+                                                                  token: tokenBox
+                                                                      .get('token'),
+                                                                  keys: [
+                                                                'kk',
+                                                                'ktp',
+                                                                'npwp'
+                                                              ],
+                                                                  files: [
+                                                                fileKTP,
+                                                                fileKK,
+                                                                fileNPWP
+                                                              ]);
+                                                        }
                                                       }
                                                     }
                                                   } else {

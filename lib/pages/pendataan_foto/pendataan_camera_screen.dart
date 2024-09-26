@@ -5,6 +5,8 @@ import 'package:dapenda/cubit/value_pendataan_foto_cubit/value_pendataan_foto_cu
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart'
     // ignore: library_prefixes
@@ -43,7 +45,10 @@ class _CameraScreenState extends State<PendataanCameraScreen> {
 
   Future<bool> initializeCamera() async {
     var cameras = await availableCameras();
-    controller = CameraController(cameras[index], ResolutionPreset.medium);
+    controller = CameraController(
+        cameras[index],
+        imageFormatGroup: ImageFormatGroup.yuv420,
+        ResolutionPreset.low);
     print("CEk Status Camera");
     print(controller.value.isInitialized);
     await controller.initialize();
@@ -80,23 +85,27 @@ class _CameraScreenState extends State<PendataanCameraScreen> {
 
     final planeData = cameraImage.planes.map(
       (Plane plane) {
-        return InputImagePlaneMetadata(
+        print(plane.width);
+        return InputImageMetadata(
           bytesPerRow: plane.bytesPerRow,
-          height: plane.height,
-          width: plane.width,
+          size: Size(plane.width == null ? 0 : plane.width!.toDouble(),
+              plane.height == null ? 0 : plane.height!.toDouble()),
+          rotation: imageRotation!,
+          format: inputImageFormat!,
         );
       },
     ).toList();
 
-    final inputImageData = InputImageData(
+    final inputImageData = InputImageMetadata(
       size: imageSize,
-      imageRotation: imageRotation!,
-      inputImageFormat: inputImageFormat!,
-      planeData: planeData,
+      rotation: imageRotation!,
+      format: inputImageFormat!,
+      bytesPerRow: planeData.first.bytesPerRow,
     );
+
     final inputImage = InputImage.fromBytes(
       bytes: bytes,
-      inputImageData: inputImageData,
+      metadata: inputImageData,
     );
 
     // if (dataDummyMatrik.length < 3) {
@@ -135,9 +144,21 @@ class _CameraScreenState extends State<PendataanCameraScreen> {
     // setState(() {
     //   _isProcessing = true;
     // });
+    final faceDetector = GoogleMlKit.
+        // ignore: deprecated_member_use
+        vision
+        .faceDetector(FaceDetectorOptions(
+            enableLandmarks: true,
+            enableContours: true,
+            performanceMode: FaceDetectorMode.fast));
 
-    final faces =
-        await MachineLearningHelper.instance.processInputImage(inputImage);
+    print("faceDetector");
+    print(faceDetector);
+    print(await faceDetector.processImage(inputImage));
+    final List<Face> faces = await faceDetector.processImage(inputImage);
+
+    // final faces =
+    //     await MachineLearningHelper.instance.processInputImage(inputImage);
     print(faces.length);
 
     if (faces.isEmpty) {

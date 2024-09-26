@@ -27,14 +27,14 @@ class DataPesertaCubit extends Cubit<DataPesertaState> {
     required String hp,
     required String prop,
     required String nik,
-    required String npwp,
+    String npwp = '',
     required String pos,
     required String nameKerabat,
     required String telpKerabat,
   }) async {
     try {
       emit(DataPesertaLoading());
-      await DataPesertaRepository().updateDataPeserta(
+      final response = await DataPesertaRepository().updateDataPeserta(
         token: token,
         edu: edu,
         kegiatan: kegiatan,
@@ -50,7 +50,7 @@ class DataPesertaCubit extends Cubit<DataPesertaState> {
       );
       emit(DataPesertaUpdated());
       // await Future.delayed(Duration(seconds: 2));
-      // if (true) {
+      // if (response) {
       //   emit(DataPesertaUpdated());
       // } else {
       //   emit(DataPesertaFailed(error: "Gagal Update Data Ulang"));
