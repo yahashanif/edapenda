@@ -32,6 +32,7 @@ class DataUlangScreen extends StatefulWidget {
 class _DataUlangScreenState extends State<DataUlangScreen> {
   Box tokenBox = Hive.box('token');
   String name = '';
+  bool isLoading = false;
 
   PickedFile? ktp;
   PickedFile? kk;
@@ -240,34 +241,52 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                   children: [
                     WidgetImage(
                         title: "Berkas Foto KTP",
-                        image: berkasUlang ? null : ktp,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? ktp
+                            : berkasUlang == false
+                                ? null
+                                : ktp,
                         imageBase64: berkasUlang ? null : state.berkas.ktp,
                         onTap: () async {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             ktp = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title: "Berkas Foto KK",
-                        image: berkasUlang ? null : kk,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? kk
+                            : berkasUlang == false
+                                ? null
+                                : kk,
                         imageBase64: berkasUlang ? null : state.berkas.kk,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             kk = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title:
                             "Berkas Foto NPWP Jika Ada, foto NPWP tidak Mandatori",
-                        image: berkasUlang ? null : npwp,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? npwp
+                            : berkasUlang == false
+                                ? null
+                                : npwp,
                         imageBase64: berkasUlang ? null : state.berkas.npwp,
                         onTap: () {
-                          if (berkasUlang) {
-                          } else {
-                            setState(() async {
-                              npwp = await getImage();
-                            });
-                          }
+                          //  if (berkasUlang == false) {
+                          // } else {
+                          setState(() async {
+                            npwp = await getImage();
+                          });
+                          // }
                         }),
                   ],
                 );
@@ -291,45 +310,70 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                   children: [
                     WidgetImage(
                         title: "Berkas Foto KTP",
-                        image: berkasUlang ? null : ktp,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? ktp
+                            : berkasUlang == false
+                                ? null
+                                : ktp,
                         imageBase64: berkasUlang ? null : state.berkas.ktp,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             ktp = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title: "Berkas Foto KK",
-                        image: berkasUlang ? null : kk,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? kk
+                            : berkasUlang == false
+                                ? null
+                                : kk,
                         imageBase64: berkasUlang ? null : state.berkas.kk,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             kk = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title:
                             "Berkas Foto NPWP Jika Ada, foto NPWP tidak Mandatori",
-                        image: berkasUlang ? null : npwp,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? npwp
+                            : berkasUlang == false
+                                ? null
+                                : npwp,
                         imageBase64: berkasUlang ? null : state.berkas.npwp,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             npwp = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title: "Berkas Surat Keterangan Belum Menikah",
-                        image: berkasUlang ? null : menikah,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? menikah
+                            : berkasUlang == false
+                                ? null
+                                : menikah,
                         imageBase64: berkasUlang
                             ? null
                             : state.berkas.suratKeteranganBelumMenikah,
                         onTap: () {
-                          if (berkasUlang) {
-                          } else {
-                            setState(() async {
-                              menikah = await getImage();
-                            });
-                          }
+                          // if (berkasUlang == false) {
+                          // } else {
+                          setState(() async {
+                            menikah = await getImage();
+                          });
+                          // }
                         }),
                   ],
                 );
@@ -365,44 +409,73 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                     umr >= 17
                         ? WidgetImage(
                             title: "Berkas Foto KTP",
-                            image: berkasUlang ? null : ktp,
+                            image:
+                                berkasUlang == true || state.berkas.status == 1
+                                    ? ktp
+                                    : berkasUlang == false
+                                        ? null
+                                        : ktp,
                             imageBase64: berkasUlang ? null : state.berkas.ktp,
                             onTap: () {
+                              //      if (berkasUlang == false) {
+                              // } else {
                               setState(() async {
                                 ktp = await getImage();
                               });
+                              // }
                             })
                         : const BoxGap(),
                     WidgetImage(
                         title: "Berkas Foto KK",
-                        image: berkasUlang ? null : kk,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? kk
+                            : berkasUlang == false
+                                ? null
+                                : kk,
                         imageBase64: berkasUlang ? null : state.berkas.kk,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             kk = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title: "Berkas Surat Keterangan Masih Kuliah",
-                        image: berkasUlang ? null : kuliah,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? kuliah
+                            : berkasUlang == false
+                                ? null
+                                : kuliah,
                         imageBase64: berkasUlang
                             ? null
                             : state.berkas.suratKeteranganMasihKuliah,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             kuliah = await getImage();
                           });
+                          // }
                         }),
                     WidgetImage(
                         title: "Berkas Surat Keterangan Belum Bekerja",
-                        image: berkasUlang ? null : bekerja,
+                        image: berkasUlang == true || state.berkas.status == 1
+                            ? bekerja
+                            : berkasUlang == false
+                                ? null
+                                : bekerja,
                         imageBase64: berkasUlang
                             ? null
                             : state.berkas.suratKeteranganBelumBekerja,
                         onTap: () {
+                          //  if (berkasUlang == false) {
+                          // } else {
                           setState(() async {
                             bekerja = await getImage();
                           });
+                          // }
                         }),
                   ],
                 );
@@ -429,6 +502,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
             print("berkasState");
             print(stateBerkas);
             if (stateBerkas is BerkasFailed) {
+              isLoading = false;
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(stateBerkas.error)));
             }
@@ -961,21 +1035,21 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 16,
                               ),
                               Text(
-                                'Untuk pembayaran Manfaat Pensiun bulanan,\n\t\t\t\tmohon ditransfer ke:',
+                                'Untuk pembayaran Manfaat Pensiun bulanan,\nMohon ditransfer ke:',
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
                                 ),
                               ),
                               Text(
-                                "\t\t\t\t${state.data.nmBankPeserta} Cab ",
+                                "${state.data.nmBankPeserta} Cab ",
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
                                 ),
                               ),
                               Text(
-                                "\t\t\t\t${state.data.noRekPeserta} \t\t\t Atas Nama ${state.data.nmRekPeserta}",
+                                "${state.data.noRekPeserta} Atas Nama ${state.data.nmRekPeserta}",
                                 style: tahomaR.copyWith(
                                   fontSize: getActualY(y: 14, context: context),
                                   color: Colors.black,
@@ -985,7 +1059,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 height: 32,
                               ),
                               Text(
-                                'Demikian Pernyataan Ini Saya Buat\nDengan Sebenernya, Sebagai Pemenuhan Kewajiban Kepada DAPENDA',
+                                'Demikian Pernyataan Ini Saya Buat\nDengan Sebenarnya, Sebagai Pemenuhan Kewajiban Kepada DAPENDA',
                                 style: tahomaB.copyWith(
                                   fontSize: getActualY(y: 16, context: context),
                                   color: Colors.black,
@@ -1035,44 +1109,24 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                 alignment: Alignment.center,
                                 child: BlocBuilder<BerkasUlangCubit, bool>(
                                   builder: (context, berkasUlangState) {
-                                    return berkasState is BerkasLoaded
+                                    return 
+                                    berkasState is BerkasLoaded
                                         ? berkasUlangState == true ||
                                                 berkasState.berkas.status == 1
-                                            ? CustomButton(
-                                                isLoading: state
-                                                        is DataPesertaLoading ||
-                                                    berkasState
-                                                        is BerkasLoading,
-                                                text: "Simpan",
-                                                onPressed: () {
-                                                  print(valueProp);
-                                                  if (_formKey.currentState!
-                                                      .validate()) {
-                                                    if (valueProp == null) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .red,
-                                                                  content: Text(
-                                                                    "Kolom provinsi tidak boleh kosong",
-                                                                    style: tahomaR
-                                                                        .copyWith(
-                                                                            color:
-                                                                                Colors.white),
-                                                                  )));
-                                                    } else {
-                                                      if (state.data
-                                                                  .stsKelAkhir ==
-                                                              "Janda" ||
-                                                          state.data
-                                                                  .stsKelAkhir ==
-                                                              "Duda") {
-                                                        if (kk == null ||
-                                                            ktp == null ||
-                                                            menikah == null) {
+                                            ? 
+                                            isLoading == false
+                                                ? 
+                                                CustomButton(
+                                                    isLoading: state
+                                                            is DataPesertaLoading &&
+                                                        berkasState
+                                                            is BerkasLoading,
+                                                    text: "Simpan",
+                                                    onPressed: () {
+                                                      print(valueProp);
+                                                      if (_formKey.currentState!
+                                                          .validate()) {
+                                                        if (valueProp == null) {
                                                           ScaffoldMessenger.of(
                                                                   context)
                                                               .showSnackBar(
@@ -1082,453 +1136,492 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                               .red,
                                                                       content:
                                                                           Text(
-                                                                        "Kolom Berkas KK, Berkas KTP dan Berkas Surat Keterangan Belum Menikah tidak boleh kosong",
+                                                                        "Kolom provinsi tidak boleh kosong",
                                                                         style: tahomaR.copyWith(
                                                                             color:
                                                                                 Colors.white),
                                                                       )));
                                                         } else {
-                                                          context.read<DataPesertaCubit>().updateDataPeserta(
-                                                              token: tokenBox
-                                                                  .get('token'),
-                                                              edu: state
-                                                                  .data.noEdu!,
-                                                              kegiatan:
-                                                                  kegiatanController
+                                                          if (state.data
+                                                                      .stsKelAkhir ==
+                                                                  "Janda" ||
+                                                              state.data
+                                                                      .stsKelAkhir ==
+                                                                  "Duda") {
+                                                            if (kk == null ||
+                                                                ktp == null ||
+                                                                menikah ==
+                                                                    null) {
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      SnackBar(
+                                                                          backgroundColor: Colors
+                                                                              .red,
+                                                                          content:
+                                                                              Text(
+                                                                            "Kolom Berkas KK, Berkas KTP dan Berkas Surat Keterangan Belum Menikah tidak boleh kosong",
+                                                                            style:
+                                                                                tahomaR.copyWith(color: Colors.white),
+                                                                          )));
+                                                            } else {
+                                                              context.read<DataPesertaCubit>().updateDataPeserta(
+                                                                  token: tokenBox.get(
+                                                                      'token'),
+                                                                  edu: state
+                                                                      .data
+                                                                      .noEdu!,
+                                                                  kegiatan:
+                                                                      kegiatanController
+                                                                          .text,
+                                                                  alamat:
+                                                                      alamatTempatTinggalController
+                                                                          .text,
+                                                                  telp:
+                                                                      notlpController
+                                                                          .text,
+                                                                  hp: noHpController
                                                                       .text,
-                                                              alamat:
-                                                                  alamatTempatTinggalController
+                                                                  prop: valueProp!
+                                                                      .kdProp!,
+                                                                  nik: nikController
                                                                       .text,
-                                                              telp:
-                                                                  notlpController
-                                                                      .text,
-                                                              hp: noHpController
-                                                                  .text,
-                                                              prop: valueProp!
-                                                                  .kdProp!,
-                                                              nik: nikController
-                                                                  .text,
-                                                              npwp: npwpController
-                                                                      .text
-                                                                      .isEmpty
-                                                                  ? ''
-                                                                  : npwpController
-                                                                      .text,
-                                                              pos:
-                                                                  kdPosController
-                                                                      .text,
-                                                              nameKerabat:
-                                                                  nameKerabatController
-                                                                      .text,
-                                                              telpKerabat:
-                                                                  noTelpKerabatController
-                                                                      .text);
-                                                          var fileKTP =
-                                                              File(ktp!.path);
-                                                          var fileKK =
-                                                              File(kk!.path);
+                                                                  npwp: npwpController
+                                                                          .text
+                                                                          .isEmpty
+                                                                      ? ''
+                                                                      : npwpController
+                                                                          .text,
+                                                                  pos:
+                                                                      kdPosController
+                                                                          .text,
+                                                                  nameKerabat:
+                                                                      nameKerabatController
+                                                                          .text,
+                                                                  telpKerabat:
+                                                                      noTelpKerabatController
+                                                                          .text);
+                                                              var fileKTP =
+                                                                  File(ktp!
+                                                                      .path);
+                                                              var fileKK = File(
+                                                                  kk!.path);
 
-                                                          var filemenikah =
-                                                              File(menikah!
-                                                                  .path);
-                                                          if (npwp == null) {
-                                                            context
-                                                                .read<
-                                                                    BerkasCubit>()
-                                                                .postBerkas(
-                                                                    token: tokenBox
-                                                                        .get(
-                                                                            'token'),
-                                                                    keys: [
-                                                                  'kk',
-                                                                  'ktp',
-                                                                  // 'npwp',
-                                                                  'surat_keterangan_belum_menikah'
-                                                                ],
-                                                                    files: [
-                                                                  fileKTP,
-                                                                  fileKK,
-                                                                  // fileNPWP,
-                                                                  filemenikah
-                                                                ]);
+                                                              var filemenikah =
+                                                                  File(menikah!
+                                                                      .path);
+                                                              if (npwp ==
+                                                                  null) {
+                                                                    isLoading = true;
+                                                                context
+                                                                    .read<
+                                                                        BerkasCubit>()
+                                                                    .postBerkas(
+                                                                        token: tokenBox
+                                                                            .get('token'),
+                                                                        keys: [
+                                                                      'kk',
+                                                                      'ktp',
+                                                                      // 'npwp',
+                                                                      'surat_keterangan_belum_menikah'
+                                                                    ],
+                                                                        files: [
+                                                                      fileKTP,
+                                                                      fileKK,
+                                                                      // fileNPWP,
+                                                                      filemenikah
+                                                                    ]);
+                                                              } else {
+                                                                    isLoading = true;
+
+                                                                var fileNPWP =
+                                                                    File(npwp!
+                                                                        .path);
+                                                                context
+                                                                    .read<
+                                                                        BerkasCubit>()
+                                                                    .postBerkas(
+                                                                        token: tokenBox
+                                                                            .get('token'),
+                                                                        keys: [
+                                                                      'kk',
+                                                                      'ktp',
+                                                                      'npwp',
+                                                                      'surat_keterangan_belum_menikah'
+                                                                    ],
+                                                                        files: [
+                                                                      fileKTP,
+                                                                      fileKK,
+                                                                      fileNPWP,
+                                                                      filemenikah
+                                                                    ]);
+                                                              }
+                                                            }
+                                                          } else if (state.data
+                                                                  .stsKelAkhir ==
+                                                              "Anak") {
+                                                            if (umur <= 17) {
+                                                              if (kk == null ||
+                                                                  kuliah ==
+                                                                      null ||
+                                                                  bekerja ==
+                                                                      null) {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        SnackBar(
+                                                                            backgroundColor:
+                                                                                Colors.red,
+                                                                            content: Text(
+                                                                              "Kolom Berkas Keterangan Masih Kuliah, Berkas Surat Keterangan Belum Bekerja dan Berkas Kartu Keluarga tidak boleh kosong",
+                                                                              style: tahomaR.copyWith(color: Colors.white),
+                                                                            )));
+                                                              } else {
+                                                                    isLoading = true;
+
+                                                                context.read<DataPesertaCubit>().updateDataPeserta(
+                                                                    token: tokenBox.get(
+                                                                        'token'),
+                                                                    edu: state
+                                                                        .data
+                                                                        .noEdu!,
+                                                                    kegiatan:
+                                                                        kegiatanController
+                                                                            .text,
+                                                                    alamat:
+                                                                        alamatTempatTinggalController
+                                                                            .text,
+                                                                    telp: notlpController
+                                                                        .text,
+                                                                    hp: noHpController
+                                                                        .text,
+                                                                    prop: valueProp!
+                                                                        .kdProp!,
+                                                                    nik: nikController
+                                                                        .text,
+                                                                    npwp: npwpController
+                                                                        .text,
+                                                                    pos: kdPosController
+                                                                        .text,
+                                                                    nameKerabat:
+                                                                        nameKerabatController
+                                                                            .text,
+                                                                    telpKerabat:
+                                                                        noTelpKerabatController
+                                                                            .text);
+
+                                                                var filekk =
+                                                                    File(kk!
+                                                                        .path);
+
+                                                                var filemenikah =
+                                                                    File(menikah!
+                                                                        .path);
+                                                                var filebekerka =
+                                                                    File(bekerja!
+                                                                        .path);
+                                                                var fileKuliah =
+                                                                    File(kuliah!
+                                                                        .path);
+
+                                                                context
+                                                                    .read<
+                                                                        BerkasCubit>()
+                                                                    .postBerkas(
+                                                                        token: tokenBox
+                                                                            .get('token'),
+                                                                        keys: [
+                                                                      'kk'
+                                                                          'surat_keterangan_masih_kuliah',
+                                                                      'surat_keterangan_belum_bekerja',
+                                                                    ],
+                                                                        files: [
+                                                                      filekk,
+                                                                      fileKuliah,
+                                                                      filebekerka,
+                                                                    ]);
+                                                              }
+                                                            } else {
+                                                              if (ktp == null ||
+                                                                  kk == null ||
+                                                                  kuliah ==
+                                                                      null ||
+                                                                  bekerja ==
+                                                                      null) {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        SnackBar(
+                                                                            backgroundColor:
+                                                                                Colors.red,
+                                                                            content: Text(
+                                                                              "Kolom Berkas Keterangan Masih Kuliah,Berkas KTP, Berkas Surat Keterangan Belum Bekerja dan Berkas Kartu Keluarga tidak boleh kosong",
+                                                                              style: tahomaR.copyWith(color: Colors.white),
+                                                                            )));
+                                                              } else {
+                                                                    isLoading = true;
+
+                                                                context.read<DataPesertaCubit>().updateDataPeserta(
+                                                                    token: tokenBox.get(
+                                                                        'token'),
+                                                                    edu: state
+                                                                        .data
+                                                                        .noEdu!,
+                                                                    kegiatan:
+                                                                        kegiatanController
+                                                                            .text,
+                                                                    alamat:
+                                                                        alamatTempatTinggalController
+                                                                            .text,
+                                                                    telp: notlpController
+                                                                        .text,
+                                                                    hp: noHpController
+                                                                        .text,
+                                                                    prop: valueProp!
+                                                                        .kdProp!,
+                                                                    nik: nikController
+                                                                        .text,
+                                                                    npwp: npwpController
+                                                                        .text,
+                                                                    pos: kdPosController
+                                                                        .text,
+                                                                    nameKerabat:
+                                                                        nameKerabatController
+                                                                            .text,
+                                                                    telpKerabat:
+                                                                        noTelpKerabatController
+                                                                            .text);
+
+                                                                var fileKTP =
+                                                                    File(ktp!
+                                                                        .path);
+                                                                var filekk =
+                                                                    File(kk!
+                                                                        .path);
+
+                                                                var filemenikah =
+                                                                    File(menikah!
+                                                                        .path);
+                                                                var filebekerka =
+                                                                    File(bekerja!
+                                                                        .path);
+                                                                var fileKuliah =
+                                                                    File(kuliah!
+                                                                        .path);
+
+                                                                context
+                                                                    .read<
+                                                                        BerkasCubit>()
+                                                                    .postBerkas(
+                                                                        token: tokenBox
+                                                                            .get('token'),
+                                                                        keys: [
+                                                                      'ktp'
+                                                                          'kk'
+                                                                          'surat_keterangan_masih_kuliah',
+                                                                      'surat_keterangan_belum_bekerja',
+                                                                    ],
+                                                                        files: [
+                                                                      fileKTP,
+                                                                      filekk,
+                                                                      fileKuliah,
+                                                                      filebekerka,
+                                                                    ]);
+                                                              }
+                                                            }
                                                           } else {
-                                                            var fileNPWP = File(
-                                                                npwp!.path);
-                                                            context
-                                                                .read<
-                                                                    BerkasCubit>()
-                                                                .postBerkas(
-                                                                    token: tokenBox
-                                                                        .get('token'),
-                                                                    keys: [
-                                                                  'kk',
-                                                                  'ktp',
-                                                                  'npwp',
-                                                                  'surat_keterangan_belum_menikah'
-                                                                ],
-                                                                    files: [
-                                                                  fileKTP,
-                                                                  fileKK,
-                                                                  fileNPWP,
-                                                                  filemenikah
-                                                                ]);
-                                                          }
-                                                        }
-                                                      } else if (state.data
-                                                              .stsKelAkhir ==
-                                                          "Anak") {
-                                                        if (umur <= 17) {
-                                                          if (kk == null ||
-                                                              kuliah == null ||
-                                                              bekerja == null) {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    SnackBar(
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .red,
-                                                                        content:
-                                                                            Text(
-                                                                          "Kolom Berkas Keterangan Masih Kuliah, Berkas Surat Keterangan Belum Bekerja dan Berkas Kartu Keluarga tidak boleh kosong",
-                                                                          style:
-                                                                              tahomaR.copyWith(color: Colors.white),
-                                                                        )));
-                                                          } else {
-                                                            context.read<DataPesertaCubit>().updateDataPeserta(
-                                                                token: tokenBox.get(
-                                                                    'token'),
-                                                                edu: state
-                                                                    .data.noEdu!,
-                                                                kegiatan:
-                                                                    kegiatanController
-                                                                        .text,
-                                                                alamat:
-                                                                    alamatTempatTinggalController
-                                                                        .text,
-                                                                telp:
-                                                                    notlpController
-                                                                        .text,
-                                                                hp: noHpController
-                                                                    .text,
-                                                                prop: valueProp!
-                                                                    .kdProp!,
-                                                                nik: nikController
-                                                                    .text,
-                                                                npwp:
-                                                                    npwpController
-                                                                        .text,
-                                                                pos: kdPosController
-                                                                    .text,
-                                                                nameKerabat:
-                                                                    nameKerabatController
-                                                                        .text,
-                                                                telpKerabat:
-                                                                    noTelpKerabatController
-                                                                        .text);
+                                                            if (kk == null ||
+                                                                ktp == null) {
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      SnackBar(
+                                                                          backgroundColor: Colors
+                                                                              .red,
+                                                                          content:
+                                                                              Text(
+                                                                            "Kolom Berkas KK dan Berkas KTP  tidak boleh kosong",
+                                                                            style:
+                                                                                tahomaR.copyWith(color: Colors.white),
+                                                                          )));
+                                                            } else {
+                                                                    isLoading = true;
 
-                                                            var filekk =
-                                                                File(kk!.path);
-
-                                                            var filemenikah =
-                                                                File(menikah!
-                                                                    .path);
-                                                            var filebekerka =
-                                                                File(bekerja!
-                                                                    .path);
-                                                            var fileKuliah =
-                                                                File(kuliah!
-                                                                    .path);
-
-                                                            context
-                                                                .read<
-                                                                    BerkasCubit>()
-                                                                .postBerkas(
-                                                                    token: tokenBox
-                                                                        .get(
-                                                                            'token'),
-                                                                    keys: [
-                                                                  'kk'
-                                                                      'surat_keterangan_masih_kuliah',
-                                                                  'surat_keterangan_belum_bekerja',
-                                                                ],
-                                                                    files: [
-                                                                  filekk,
-                                                                  fileKuliah,
-                                                                  filebekerka,
-                                                                ]);
-                                                          }
-                                                        } else {
-                                                          if (ktp == null ||
-                                                              kk == null ||
-                                                              kuliah == null ||
-                                                              bekerja == null) {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    SnackBar(
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .red,
-                                                                        content:
-                                                                            Text(
-                                                                          "Kolom Berkas Keterangan Masih Kuliah,Berkas KTP, Berkas Surat Keterangan Belum Bekerja dan Berkas Kartu Keluarga tidak boleh kosong",
-                                                                          style:
-                                                                              tahomaR.copyWith(color: Colors.white),
-                                                                        )));
-                                                          } else {
-                                                            context.read<DataPesertaCubit>().updateDataPeserta(
-                                                                token: tokenBox.get(
-                                                                    'token'),
-                                                                edu: state
-                                                                    .data.noEdu!,
-                                                                kegiatan:
-                                                                    kegiatanController
-                                                                        .text,
-                                                                alamat:
-                                                                    alamatTempatTinggalController
-                                                                        .text,
-                                                                telp:
-                                                                    notlpController
-                                                                        .text,
-                                                                hp: noHpController
-                                                                    .text,
-                                                                prop: valueProp!
-                                                                    .kdProp!,
-                                                                nik: nikController
-                                                                    .text,
-                                                                npwp:
-                                                                    npwpController
-                                                                        .text,
-                                                                pos: kdPosController
-                                                                    .text,
-                                                                nameKerabat:
-                                                                    nameKerabatController
-                                                                        .text,
-                                                                telpKerabat:
-                                                                    noTelpKerabatController
-                                                                        .text);
-
+                                                              context.read<DataPesertaCubit>().updateDataPeserta(
+                                                                  token: tokenBox.get(
+                                                                      'token'),
+                                                                  edu: state
+                                                                      .data
+                                                                      .noEdu!,
+                                                                  kegiatan:
+                                                                      kegiatanController
+                                                                          .text,
+                                                                  alamat:
+                                                                      alamatTempatTinggalController
+                                                                          .text,
+                                                                  telp:
+                                                                      notlpController
+                                                                          .text,
+                                                                  hp: noHpController
+                                                                      .text,
+                                                                  prop: valueProp!
+                                                                      .kdProp!,
+                                                                  nik: nikController
+                                                                      .text,
+                                                                  npwp:
+                                                                      npwpController
+                                                                          .text,
+                                                                  pos: kdPosController
+                                                                      .text,
+                                                                  nameKerabat:
+                                                                      nameKerabatController
+                                                                          .text,
+                                                                  telpKerabat:
+                                                                      noTelpKerabatController
+                                                                          .text);
+                                                            }
                                                             var fileKTP =
                                                                 File(ktp!.path);
-                                                            var filekk =
+                                                            var fileKK =
                                                                 File(kk!.path);
 
-                                                            var filemenikah =
-                                                                File(menikah!
-                                                                    .path);
-                                                            var filebekerka =
-                                                                File(bekerja!
-                                                                    .path);
-                                                            var fileKuliah =
-                                                                File(kuliah!
-                                                                    .path);
+                                                            if (npwp == null) {
+                                                                    isLoading = true;
 
-                                                            context
-                                                                .read<
-                                                                    BerkasCubit>()
-                                                                .postBerkas(
-                                                                    token: tokenBox
-                                                                        .get(
-                                                                            'token'),
-                                                                    keys: [
-                                                                  'ktp'
-                                                                      'kk'
-                                                                      'surat_keterangan_masih_kuliah',
-                                                                  'surat_keterangan_belum_bekerja',
-                                                                ],
-                                                                    files: [
-                                                                  fileKTP,
-                                                                  filekk,
-                                                                  fileKuliah,
-                                                                  filebekerka,
-                                                                ]);
+                                                              context
+                                                                  .read<
+                                                                      BerkasCubit>()
+                                                                  .postBerkas(
+                                                                      token: tokenBox
+                                                                          .get(
+                                                                              'token'),
+                                                                      keys: [
+                                                                    'kk',
+                                                                    'ktp',
+                                                                    // 'npwp'
+                                                                  ],
+                                                                      files: [
+                                                                    fileKTP,
+                                                                    fileKK,
+                                                                    // fileNPWP
+                                                                  ]);
+                                                            } else {
+                                                                    isLoading = true;
+
+                                                              var fileNPWP =
+                                                                  File(npwp!
+                                                                      .path);
+                                                              context
+                                                                  .read<
+                                                                      BerkasCubit>()
+                                                                  .postBerkas(
+                                                                      token: tokenBox
+                                                                          .get('token'),
+                                                                      keys: [
+                                                                    'kk',
+                                                                    'ktp',
+                                                                    'npwp'
+                                                                  ],
+                                                                      files: [
+                                                                    fileKTP,
+                                                                    fileKK,
+                                                                    fileNPWP
+                                                                  ]);
+                                                            }
                                                           }
                                                         }
                                                       } else {
-                                                        if (kk == null ||
-                                                            ktp == null) {
+                                                        Future(() {
                                                           ScaffoldMessenger.of(
                                                                   context)
                                                               .showSnackBar(
-                                                                  SnackBar(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .red,
-                                                                      content:
-                                                                          Text(
-                                                                        "Kolom Berkas KK dan Berkas KTP  tidak boleh kosong",
-                                                                        style: tahomaR.copyWith(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      )));
-                                                        } else {
-                                                          context.read<DataPesertaCubit>().updateDataPeserta(
-                                                              token: tokenBox
-                                                                  .get('token'),
-                                                              edu: state
-                                                                  .data.noEdu!,
-                                                              kegiatan:
-                                                                  kegiatanController
-                                                                      .text,
-                                                              alamat:
-                                                                  alamatTempatTinggalController
-                                                                      .text,
-                                                              telp:
-                                                                  notlpController
-                                                                      .text,
-                                                              hp: noHpController
-                                                                  .text,
-                                                              prop: valueProp!
-                                                                  .kdProp!,
-                                                              nik: nikController
-                                                                  .text,
-                                                              npwp:
-                                                                  npwpController
-                                                                      .text,
-                                                              pos:
-                                                                  kdPosController
-                                                                      .text,
-                                                              nameKerabat:
-                                                                  nameKerabatController
-                                                                      .text,
-                                                              telpKerabat:
-                                                                  noTelpKerabatController
-                                                                      .text);
-                                                        }
-                                                        var fileKTP =
-                                                            File(ktp!.path);
-                                                        var fileKK =
-                                                            File(kk!.path);
-
-                                                        if (npwp == null) {
-                                                          context
-                                                              .read<
-                                                                  BerkasCubit>()
-                                                              .postBerkas(
-                                                                  token: tokenBox
-                                                                      .get(
-                                                                          'token'),
-                                                                  keys: [
-                                                                'kk',
-                                                                'ktp',
-                                                                // 'npwp'
-                                                              ],
-                                                                  files: [
-                                                                fileKTP,
-                                                                fileKK,
-                                                                // fileNPWP
-                                                              ]);
-                                                        } else {
-                                                          var fileNPWP =
-                                                              File(npwp!.path);
-                                                          context
-                                                              .read<
-                                                                  BerkasCubit>()
-                                                              .postBerkas(
-                                                                  token: tokenBox
-                                                                      .get('token'),
-                                                                  keys: [
-                                                                'kk',
-                                                                'ktp',
-                                                                'npwp'
-                                                              ],
-                                                                  files: [
-                                                                fileKTP,
-                                                                fileKK,
-                                                                fileNPWP
-                                                              ]);
-                                                        }
-                                                      }
-                                                    }
-                                                  } else {
-                                                    Future(() {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                          content: Text(
-                                                            "Semua kolom wajib diisi ",
-                                                            style: tahomaR
-                                                                .copyWith(
+                                                            SnackBar(
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                              content: Text(
+                                                                "Semua kolom wajib diisi ",
+                                                                style: tahomaR.copyWith(
                                                                     color: Colors
                                                                         .white),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    });
-                                                  }
-                                                })
-                                            : berkasState.berkas.status == 2
-                                                ? Container()
-                                                : berkasState.berkas.status == 4
-                                                    ? CustomButton(
-                                                        onPressed: () {
-                                                          context
-                                                              .read<
-                                                                  BerkasUlangCubit>()
-                                                              .setValue(true);
-                                                        },
-                                                        text: "ULANGI",
-                                                      )
+                                                              ),
+                                                            ),
+                                                          );
+                                                        });
+                                                      }
+                                                    })
+                                                : berkasState.berkas.status == 2
+                                                    ? Container()
                                                     : berkasState.berkas
                                                                 .status ==
-                                                            3
-                                                        ? Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              Expanded(
-                                                                child:
-                                                                    Container(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
+                                                            4
+                                                        ? CustomButton(
+                                                            onPressed: () {
+                                                              context
+                                                                  .read<
+                                                                      BerkasUlangCubit>()
+                                                                  .setValue(
+                                                                      true);
+                                                            },
+                                                            text: "ULANGI",
+                                                          )
+                                                        : berkasState.berkas
+                                                                    .status ==
+                                                                3
+                                                            ? Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Expanded(
+                                                                    child:
+                                                                        Container(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
                                                                               16),
-                                                                  height: 40,
-                                                                  child:
-                                                                      CustomButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    text: "OKE",
+                                                                      height:
+                                                                          40,
+                                                                      child:
+                                                                          CustomButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        text:
+                                                                            "OKE",
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                    Container(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
+                                                                  Expanded(
+                                                                    child:
+                                                                        Container(
+                                                                      padding: EdgeInsets.symmetric(
                                                                           horizontal:
                                                                               8),
-                                                                  height: 40,
-                                                                  child:
-                                                                      CustomButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      // Navigator.pushReplacementNamed(context, '/unggah');
-                                                                      context
-                                                                          .read<
-                                                                              BerkasUlangCubit>()
-                                                                          .setValue(
-                                                                              true);
-                                                                    },
-                                                                    fontTextSize:
-                                                                        14,
-                                                                    text:
-                                                                        "UPDATE BERKAS",
+                                                                      height:
+                                                                          40,
+                                                                      child:
+                                                                          CustomButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          // Navigator.pushReplacementNamed(context, '/unggah');
+                                                                          context
+                                                                              .read<BerkasUlangCubit>()
+                                                                              .setValue(true);
+                                                                        },
+                                                                        fontTextSize:
+                                                                            14,
+                                                                        text:
+                                                                            "UPDATE BERKAS",
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Container()
+                                                                ],
+                                                              )
+                                                            : Container()
+                                            : Container()
                                         : Container();
                                   },
                                 ),

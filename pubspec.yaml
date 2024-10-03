@@ -49,7 +49,7 @@ dependencies:
   image_picker: ^1.1.2
   liveness_detection_flutter_plugin:
     git:
-      url: https://github.com/yahashanif/liveness-e-dapenda.git
+      url: https://github.com/yahas-hanif/liveness-e-dapenda.git
       ref: main
   mask_text_input_formatter: ^2.9.0
   mime: ^1.0.5

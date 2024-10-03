@@ -13,6 +13,8 @@ class OtenticationRepository extends BaseRepository {
     final body = {
       'verified': verified,
     };
+    print(body);
+    print("BODY");
     final response = await postFiles(
         token: token, service: 'd_otentikasi/add', body: body, files: [file]);
     print(response.body);

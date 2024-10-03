@@ -12,7 +12,7 @@ import 'image_converter.dart';
 
 class MLService {
   Interpreter? _interpreter;
-  double threshold = 0.7;
+  double threshold = 0.6;
   double threshold2 = 0.8;
 
   List _predictedData = [];
