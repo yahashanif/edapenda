@@ -155,9 +155,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 height: 4,
                               ),
                               Text(
-                                'Masukkan Nomor e-DU Anda',
+                                'Nomor e-DU = TAHUN LAHIR-BULAN LAHIR TANGGAL LAHIR-NOMOR PENSIUN',
                                 style: tahomaR.copyWith(
-                                  fontSize: getActualY(y: 12, context: context),
+                                  fontSize: getActualY(y: 10, context: context),
+                                  color: Color(0XFF707070),
+                                ),
+                              ),
+                              Text(
+                                'Format: (YYYY-MMDD-0000)',
+                                style: tahomaR.copyWith(
+                                  fontSize: getActualY(y: 10, context: context),
                                   color: Color(0XFF707070),
                                 ),
                               ),

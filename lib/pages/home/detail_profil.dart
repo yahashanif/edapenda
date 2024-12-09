@@ -73,7 +73,7 @@ class DetailProfil extends StatelessWidget {
                 height: 5,
               ),
               Text(
-                "MP Dibayarkan Sekarang",
+              user.stsPen == "T" ? "MP Ditunda" :  "MP Dibayarkan",
                 style: tahomaR.copyWith(
                   fontSize: getActualY(y: 14, context: context),
                   color: Color(0XFF757575),

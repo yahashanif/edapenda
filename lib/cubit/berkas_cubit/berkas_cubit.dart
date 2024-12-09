@@ -26,6 +26,8 @@ class BerkasCubit extends Cubit<BerkasState> {
       required List<File> files,
       required List<String> keys}) async {
     try {
+      print(files);
+      print(keys);
       emit(BerkasLoading());
       await BerkasRepository().updateBerkas(
         token: token,

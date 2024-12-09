@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 double designHeightPhone = 844;
 double designWidthPhone = 390;
@@ -18,6 +23,28 @@ double getActualY({
 }) {
   return y / designHeightPhone * MediaQuery.of(context).size.height;
 }
+Future<PickedFile> convertBase64ToPickedFile(String base64Str, String fileName) async {
+  // Hapus prefix Base64 jika ada
+  if (base64Str.contains(',')) {
+    base64Str = base64Str.split(',').last;
+  }
+
+  // Dekode Base64 ke bytes
+  final bytes = base64Decode(base64Str);
+
+  // Simpan file ke direktori sementara
+  final directory = await getTemporaryDirectory();
+  final filePath = '${directory.path}/$fileName';
+  final file = File(filePath);
+  await file.writeAsBytes(bytes);
+
+  print("file");
+  print(file);
+
+  // Buat PickedFile dari path file
+  return PickedFile(file.path);
+}
+
 
 List<List<double>> dataDummyMatrik = [
   // [

@@ -86,6 +86,8 @@ class DataPesertaRepository extends BaseRepository {
     required String pos,
     required String nameKerabat,
     required String telpKerabat,
+    required bool aggrement
+
   }) async {
     final body = {
       'no_edu': edu,
@@ -99,6 +101,7 @@ class DataPesertaRepository extends BaseRepository {
       'npwp': npwp,
       'name_kerabat': nameKerabat,
       'telp_kerabat': telpKerabat,
+      'agreement':aggrement,
     };
     print("body");
     print(body);

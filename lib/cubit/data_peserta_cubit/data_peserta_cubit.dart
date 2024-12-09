@@ -31,6 +31,7 @@ class DataPesertaCubit extends Cubit<DataPesertaState> {
     required String pos,
     required String nameKerabat,
     required String telpKerabat,
+    required bool aggrement
   }) async {
     try {
       emit(DataPesertaLoading());
@@ -47,6 +48,7 @@ class DataPesertaCubit extends Cubit<DataPesertaState> {
         pos: pos,
         nameKerabat: nameKerabat,
         telpKerabat: telpKerabat,
+        aggrement:aggrement
       );
       emit(DataPesertaUpdated());
       // await Future.delayed(Duration(seconds: 2));

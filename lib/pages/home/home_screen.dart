@@ -346,9 +346,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       .pendataanFoto
                                                                       .verified ==
                                                                   false
-                                                          ? "Silahkan lakukan pendataan\nterlebih dahulu sebelum melakukan otentikasi"
+                                                          ? "Mohon melakukan foto terlebih dahulu agar dapat melakukan authentikasi"
                                                           : 'Silakan Lakukan Otentikasi\ndisini.',
-                                                  image: 'otentikasi',
+                                                  image: cekOtentikasiState
+                                                              .otentikasi
+                                                              .otentikasi ==
+                                                          true
+                                                      ? "success"
+                                                      : 'otentikasi',
                                                 )
                                               : pendataanFotoState
                                                       is PendataanFotoLoaded
@@ -356,8 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       func: null,
                                                       title: 'Otentikasi',
                                                       subtitle: cekOtentikasiState
-                                                              .otentikasi
-                                                              .otentikasi!
+                                                              .otentikasi.otentikasi!
                                                           ? 'Anda Sudah Melakukan\nOtentikasi'
                                                           : pendataanFotoState
                                                                           .pendataanFoto
@@ -367,9 +371,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                           .pendataanFoto
                                                                           .verified ==
                                                                       false
-                                                              ? "Silahkan lakukan pendataan\nterlebih dahulu sebelum melakukan otentikasi"
+                                                              ? "Mohon melakukan foto terlebih dahulu agar dapat melakukan authentikasi"
                                                               : 'Silakan Lakukan Otentikasi\ndisini.',
-                                                      image: 'otentikasi')
+                                                      image: cekOtentikasiState
+                                                                  .otentikasi
+                                                                  .otentikasi ==
+                                                              true
+                                                          ? "success"
+                                                          : 'otentikasi')
                                                   : Menu(
                                                       func: null,
                                                       title: 'Otentikasi',
@@ -377,8 +386,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               .otentikasi
                                                               .otentikasi!
                                                           ? 'Anda Sudah Melakukan\nOtentikasi'
-                                                          : "Silahkan lakukan pendataan\nterlebihdahulu sebelum melakukan otentikasi",
-                                                      image: 'otentikasi');
+                                                          : "Mohon melakukan foto terlebih dahulu agar dapat melakukan authentikasi",
+                                                      image: cekOtentikasiState
+                                                                  .otentikasi
+                                                                  .otentikasi ==
+                                                              true
+                                                          ? "success"
+                                                          : 'otentikasi');
                                     },
                                   );
                                 }
@@ -402,82 +416,129 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                         ),
-                        BlocBuilder<PendataanFotoCubit, PendataanFotoState>(
-                          builder: (context, pendataanFotoState) {
-                            return BlocBuilder<BerkasCubit, BerkasState>(
-                              builder: (context, state) {
-                                return Menu(
-                                  func: pendataanFotoState
-                                          is PendataanFotoLoaded
-                                      ? pendataanFotoState
-                                                  .pendataanFoto.verified ==
-                                              false
-                                          ? null
-                                          : () {
-                                              context
-                                                  .read<BerkasUlangCubit>()
-                                                  .setValue(false);
-                                              // context.read<DataPesertaCubit>().getDataPeserta(
-                                              //     token: tokenBox.get('token'));
-                                              Navigator.pushNamed(
-                                                  context, dataUlangRoute);
-                                            }
-                                      // state is BerkasLoaded
-                                      //     ? state.berkas.file1 == '' ||
-                                      //             state.berkas.file2 == ''
-                                      //         ? () {
-                                      //             Navigator.pushNamed(
-                                      //                 context, dataUlangRoute);
-                                      //           }
-                                      //         : state.berkas.verified == true
-                                      //             ? () {
-                                      //                 Navigator.pushNamed(
-                                      //                     context, dataUlangRoute);
-                                      //               }
-                                      //             : state.berkas.verified == false &&
-                                      //                     state.berkas.status == true
-                                      //                 ? null
-                                      //                 : null
-                                      //     : null,
+                        BlocBuilder<CekOtentikasiCubit, CekOtentikasiState>(
+                          builder: (context, cekOtentikasiState) {
+                            // if (state is CekOtentikasiFailed) {
+                            //   return ErrorOutput(message: state.message);
+                            // }
+                            if (cekOtentikasiState is CekOtentikasiLoaded) {
+                              return BlocBuilder<PendataanFotoCubit,
+                                  PendataanFotoState>(
+                                builder: (context, pendataanFotoState) {
+                                  return BlocBuilder<BerkasCubit, BerkasState>(
+                                    builder: (context, state) {
+                                      return Menu(
+                                        func: cekOtentikasiState
+                                                    .otentikasi.otentikasi ==
+                                                false
+                                            ? null
+                                            : pendataanFotoState
+                                                    is PendataanFotoLoaded
+                                                ? pendataanFotoState
+                                                            .pendataanFoto
+                                                            .verified ==
+                                                        false
+                                                    ? null
+                                                    : () {
+                                                        context
+                                                            .read<
+                                                                BerkasUlangCubit>()
+                                                            .setValue(false);
+                                                        // context.read<DataPesertaCubit>().getDataPeserta(
+                                                        //     token: tokenBox.get('token'));
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            dataUlangRoute);
+                                                      }
+                                                // state is BerkasLoaded
+                                                //     ? state.berkas.file1 == '' ||
+                                                //             state.berkas.file2 == ''
+                                                //         ? () {
+                                                //             Navigator.pushNamed(
+                                                //                 context, dataUlangRoute);
+                                                //           }
+                                                //         : state.berkas.verified == true
+                                                //             ? () {
+                                                //                 Navigator.pushNamed(
+                                                //                     context, dataUlangRoute);
+                                                //               }
+                                                //             : state.berkas.verified == false &&
+                                                //                     state.berkas.status == true
+                                                //                 ? null
+                                                //                 : null
+                                                //     : null,
 
-                                      // state is BerkasLoaded
-                                      //     ? state.berkas.file1 == '' ||
-                                      //             state.berkas.file2 == ''
-                                      // ? () {
-                                      //     Navigator.pushNamed(
-                                      //         context, dataUlangRoute);
-                                      //   }
-                                      //         : null
-                                      //     : null,
-                                      : null,
-                                  title: 'Data Ulang',
-                                  subtitle: pendataanFotoState
-                                          is PendataanFotoLoaded
-                                      ? pendataanFotoState
-                                                  .pendataanFoto.verified ==
-                                              false
-                                          ? 'Selesaikan pendataan foto terlebih dahulu'
-                                          : state is BerkasLoaded
-                                              ? state.berkas.status == 1
-                                                  ? 'Anda Belum Mengunggah Berkas\nData Ulang'
-                                                  : state.berkas.status == 2
-                                                      ? "Menunggu Verifikasi Berkas\nData Ulang"
-                                                      : state.berkas.status == 3
-                                                          ? "Jika ada perubahan, Silakan\nlakukan disini."
-                                                          : "Verifikasi Berkas\nData Ulang Gagal"
+                                                // state is BerkasLoaded
+                                                //     ? state.berkas.file1 == '' ||
+                                                //             state.berkas.file2 == ''
+                                                // ? () {
+                                                //     Navigator.pushNamed(
+                                                //         context, dataUlangRoute);
+                                                //   }
+                                                //         : null
+                                                //     : null,
+                                                : null,
+                                        title: 'Data Ulang',
+                                        subtitle: cekOtentikasiState
+                                                    .otentikasi.otentikasi ==
+                                                false
+                                            ? "Mohon melakukan authentikasi\nterlebih dahulu agar dapat\nmelakukan data ulang"
+                                            : pendataanFotoState
+                                                    is PendataanFotoLoaded
+                                                ? pendataanFotoState
+                                                            .pendataanFoto
+                                                            .verified ==
+                                                        false
+                                                    ? 'Selesaikan pendataan foto terlebih dahulu'
+                                                    : state is BerkasLoaded
+                                                        ? state.berkas.status ==
+                                                                1
+                                                            ? 'Anda Belum Mengunggah Berkas\nData Ulang'
+                                                            : state.berkas
+                                                                        .status ==
+                                                                    2
+                                                                ? "Menunggu Verifikasi Berkas\nData Ulang"
+                                                                : state.berkas
+                                                                            .status ==
+                                                                        3
+                                                                    ? "Data Ulang telah Berhasil\nJika ada perubahan\nSilahkan lakukan disini"
+                                                                    : "Verifikasi Berkas\nData Ulang Gagal"
 
-                                              // state.berkas.status == 2 &&
-                                              //         state.berkas.verified == true
-                                              //     ? 'Jika ada perubahan, Silakan\nlakukan disini.'
-                                              //     : state.berkas.status == 1
-                                              //         ? "Menunggu Verifikasi Berkas\nData Ulang"
-                                              //         // ? state.berkas.verified.toString()
-                                              //         : "Verifikasi Berkas\nData Ulang Gagal"
-                                              : ''
-                                      : 'Selesaikan pendataan foto terlebih dahulu',
-                                  image: 'data',
-                                );
-                              },
+                                                        // state.berkas.status == 2 &&
+                                                        //         state.berkas.verified == true
+                                                        //     ? 'Jika ada perubahan, Silakan\nlakukan disini.'
+                                                        //     : state.berkas.status == 1
+                                                        //         ? "Menunggu Verifikasi Berkas\nData Ulang"
+                                                        //         // ? state.berkas.verified.toString()
+                                                        //         : "Verifikasi Berkas\nData Ulang Gagal"
+                                                        : ''
+                                                : 'Selesaikan pendataan foto terlebih dahulu',
+                                        image: state is BerkasLoaded
+                                            ? state.berkas.status == 3
+                                                ? "success"
+                                                : 'data'
+                                            : 'data',
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            }
+                            return Shimmer(
+                              direction: ShimmerDirection.ltr,
+                              gradient: LinearGradient(
+                                stops: [0.2, 0.5, 0.8],
+                                colors: [
+                                  Colors.grey[300]!,
+                                  Colors.grey[300]!.withOpacity(0.4),
+                                  Colors.grey[300]!
+                                ],
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: 135,
+                                color: Colors.grey[300]!,
+                              ),
                             );
                           },
                         ),

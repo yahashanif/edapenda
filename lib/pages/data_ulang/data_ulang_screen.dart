@@ -3,16 +3,19 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dapenda/app/constant.dart';
+import 'package:dapenda/app/routes.dart';
 import 'package:dapenda/cubit/auth_cubit/auth_cubit.dart';
 import 'package:dapenda/cubit/data_peserta_cubit/data_peserta_cubit.dart';
 import 'package:dapenda/model/province.dart';
 import 'package:dapenda/widgets/base_appbar.dart';
 import 'package:dapenda/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
+import 'package:intl/intl.dart';
 
 import '../../cubit/berkas_cubit/berkas_cubit.dart';
 import '../../cubit/berkas_cubit/berkas_ulang_cubit.dart';
@@ -33,6 +36,8 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
   Box tokenBox = Hive.box('token');
   String name = '';
   bool isLoading = false;
+  bool isAgree = false;
+  bool isErrorAgree = false;
 
   PickedFile? ktp;
   PickedFile? kk;
@@ -122,6 +127,34 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
   @override
   Widget build(BuildContext context) {
     final dataUlangState = context.read<BerkasUlangCubit>().state;
+    final berkasStateData = context.read<BerkasCubit>().state;
+
+    // getBerkas() async {
+    //   if (berkasStateData is BerkasLoaded) {
+    //     print(berkasStateData.berkas.ktp == null);
+    //     if (berkasStateData.berkas.ktp != null) {
+    //       ktp = await convertBase64ToPickedFile(
+    //           berkasStateData.berkas.ktp!, "ktp.png");
+    //     }
+    //     print("KTP");
+    //     print(ktp);
+    //     if (berkasStateData.berkas.kk != null) {
+    //       kk = await convertBase64ToPickedFile(
+    //           berkasStateData.berkas.kk!, "kk.png");
+    //     }
+    //     if (berkasStateData.berkas.suratKeteranganMasihKuliah != null) {
+    //       kuliah = await convertBase64ToPickedFile(
+    //           berkasStateData.berkas.suratKeteranganMasihKuliah!, "kuliah.png");
+    //     }
+    //     if (berkasStateData.berkas.suratKeteranganBelumBekerja != null) {
+    //       bekerja = await convertBase64ToPickedFile(
+    //           berkasStateData.berkas.suratKeteranganBelumBekerja!,
+    //           "bekerja.png");
+    //     }
+    //   }
+    // }
+
+    // getBerkas();
 
     if (dataUlangState is DataPesertaUpdated) {
       context
@@ -149,7 +182,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
         required Function() onTap}) {
       Uint8List? bytes;
       if (imageBase64 != null) {
-        bytes = base64Decode(imageBase64);
+        bytes = base64Decode(imageBase64.split(",").last);
       }
 
       return Column(
@@ -163,67 +196,128 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
             height: 24,
           ),
           InkWell(
-            onTap: () {
-              onTap();
-            },
-            child: Align(
-                alignment: Alignment.center,
-                child: image != null || imageBase64 != null
-                    ? imageBase64 == ''
-                        ? Container(
-                            decoration: DottedDecoration(
-                                shape: Shape.box,
-                                color: blue,
-                                borderRadius: BorderRadius.circular(8)),
-                            // child: Image.memory(
-                            //   bytes!,
-                            //   width: MediaQuery.of(context).size.width,
-                            //   height: MediaQuery.of(context).size.width * 0.5,
-                            // ),
-                          )
-                        : imageBase64 != null
-                            ? Container(
-                                decoration: DottedDecoration(
-                                    shape: Shape.box,
-                                    color: blue,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Image.memory(
-                                  bytes!,
-                                  width: MediaQuery.of(context).size.width,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                ),
-                              )
-                            : Container(
-                                decoration: DottedDecoration(
-                                    shape: Shape.box,
-                                    color: blue,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: Image.file(
-                                  File(image!.path),
-                                  width: MediaQuery.of(context).size.width,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                ),
-                              )
-                    : Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: getActualX(x: 16, context: context),
-                            vertical: getActualY(y: 16, context: context)),
-                        width: double.infinity,
-                        decoration: DottedDecoration(
-                            shape: Shape.box,
-                            color: blue,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Center(
-                            child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.camera_enhance_rounded),
-                          ],
-                        )),
-                      )),
-          ),
+              onTap: () {
+                onTap();
+              },
+              child: Align(
+                  alignment: Alignment.center,
+                  child:
+                      // image != null || imageBase64 != null
+                      //     ?
+                      // imageBase64 == ''
+                      // ? Container(
+                      //     decoration: DottedDecoration(
+                      //         shape: Shape.box,
+                      //         color: blue,
+                      //         borderRadius: BorderRadius.circular(8)),
+                      //     // child: Image.memory(
+                      //     //   bytes!,
+                      //     //   width: MediaQuery.of(context).size.width,
+                      //     //   height: MediaQuery.of(context).size.width * 0.5,
+                      //     // ),
+                      //   )
+                      //     :
+                      image == null && bytes == null
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      getActualX(x: 16, context: context),
+                                  vertical:
+                                      getActualY(y: 16, context: context)),
+                              width: double.infinity,
+                              decoration: DottedDecoration(
+                                  shape: Shape.box,
+                                  color: blue,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.camera_enhance_rounded),
+                                ],
+                              )),
+                            )
+                          : image == null
+                              ? imageBase64 == '' || imageBase64 == null
+                                  ? Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: getActualX(
+                                              x: 16, context: context),
+                                          vertical: getActualY(
+                                              y: 16, context: context)),
+                                      width: double.infinity,
+                                      decoration: DottedDecoration(
+                                          shape: Shape.box,
+                                          color: blue,
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: Center(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.camera_enhance_rounded),
+                                        ],
+                                      )),
+                                    )
+                                  : Container(
+                                      decoration: DottedDecoration(
+                                        shape: Shape.box,
+                                        color: blue,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Builder(
+                                        builder: (context) {
+                                          try {
+                                            // Coba untuk menampilkan gambar dari bytes
+                                            return Image.memory(
+                                              bytes!,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.5,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                // Jika gambar tidak valid, tampilkan alternatif
+                                                return Center(
+                                                  child: Icon(
+                                                    Icons.broken_image,
+                                                    color: Colors.grey,
+                                                    size: 50,
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          } catch (e) {
+                                            // Tampilkan widget alternatif jika bytes tidak valid
+                                            return Center(
+                                                child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons
+                                                    .camera_enhance_rounded),
+                                              ],
+                                            ));
+                                          }
+                                        },
+                                      ),
+                                    )
+                              : Container(
+                                  decoration: DottedDecoration(
+                                      shape: Shape.box,
+                                      color: blue,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Image.file(
+                                    File(image!.path),
+                                    width: MediaQuery.of(context).size.width,
+                                    height:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                  ),
+                                ))),
           const BoxGap(
             height: 16,
           )
@@ -234,59 +328,73 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
     BerkasBiasa() {
       return BlocBuilder<BerkasUlangCubit, bool>(
         builder: (context, berkasUlang) {
-          return BlocBuilder<BerkasCubit, BerkasState>(
+          return BlocConsumer<BerkasCubit, BerkasState>(
+            listener: (context, state) async {
+              // if (state is BerkasLoaded) {
+              //   if (state.berkas.ktp != null) {
+              //     ktp = await convertBase64ToPickedFile(
+              //         state.berkas.ktp!, "ktp.png");
+              //   }
+              //   if (state.berkas.kk != null) {
+              //     kk = await convertBase64ToPickedFile(
+              //         state.berkas.kk!, "kk.png");
+              //   }
+              //   if (state.berkas.npwp != null) {
+              //     npwp = await convertBase64ToPickedFile(
+              //         state.berkas.npwp!, "npwp.png");
+              //   }
+              // }
+            },
             builder: (context, state) {
               if (state is BerkasLoaded) {
                 return Column(
                   children: [
                     WidgetImage(
                         title: "Berkas Foto KTP",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? ktp
-                            : berkasUlang == false
-                                ? null
-                                : ktp,
-                        imageBase64: berkasUlang ? null : state.berkas.ktp,
+                        image: ktp,
+                        //  berkasUlang == true || state.berkas.status == 1
+                        //     ? ktp
+                        //     : berkasUlang == false
+                        //         ? null
+                        //         : ktp,
+                        imageBase64: state.berkas.ktp,
                         onTap: () async {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            ktp = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              ktp = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title: "Berkas Foto KK",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? kk
-                            : berkasUlang == false
-                                ? null
-                                : kk,
-                        imageBase64: berkasUlang ? null : state.berkas.kk,
+                        image: kk,
+                        // berkasUlang == true || state.berkas.status == 1
+                        //     ? kk
+                        //     : berkasUlang == false
+                        //         ? null
+                        //         : kk,
+                        imageBase64: state.berkas.kk,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            kk = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              kk = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title:
                             "Berkas Foto NPWP Jika Ada, foto NPWP tidak Mandatori",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? npwp
-                            : berkasUlang == false
-                                ? null
-                                : npwp,
-                        imageBase64: berkasUlang ? null : state.berkas.npwp,
+                        image: npwp,
+                        imageBase64: state.berkas.npwp,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            npwp = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              npwp = await getImage();
+                            });
+                          }
                         }),
                   ],
                 );
@@ -310,70 +418,52 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                   children: [
                     WidgetImage(
                         title: "Berkas Foto KTP",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? ktp
-                            : berkasUlang == false
-                                ? null
-                                : ktp,
-                        imageBase64: berkasUlang ? null : state.berkas.ktp,
+                        image: ktp,
+                        imageBase64: state.berkas.ktp,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            ktp = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              ktp = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title: "Berkas Foto KK",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? kk
-                            : berkasUlang == false
-                                ? null
-                                : kk,
-                        imageBase64: berkasUlang ? null : state.berkas.kk,
+                        image: kk,
+                        imageBase64: state.berkas.kk,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            kk = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              kk = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title:
                             "Berkas Foto NPWP Jika Ada, foto NPWP tidak Mandatori",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? npwp
-                            : berkasUlang == false
-                                ? null
-                                : npwp,
-                        imageBase64: berkasUlang ? null : state.berkas.npwp,
+                        image: npwp,
+                        imageBase64: state.berkas.npwp,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            npwp = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              npwp = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title: "Berkas Surat Keterangan Belum Menikah",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? menikah
-                            : berkasUlang == false
-                                ? null
-                                : menikah,
-                        imageBase64: berkasUlang
-                            ? null
-                            : state.berkas.suratKeteranganBelumMenikah,
+                        image: menikah,
+                        imageBase64: state.berkas.suratKeteranganBelumMenikah,
                         onTap: () {
-                          // if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            menikah = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              menikah = await getImage();
+                            });
+                          }
                         }),
                   ],
                 );
@@ -390,7 +480,8 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
     BerkasAnak({required int umr}) {
       return BlocBuilder<BerkasUlangCubit, bool>(
         builder: (context, berkasUlang) {
-          return BlocBuilder<BerkasCubit, BerkasState>(
+          return BlocConsumer<BerkasCubit, BerkasState>(
+            listener: (context, state) async {},
             builder: (context, state) {
               if (state is BerkasLoaded) {
                 return Column(
@@ -409,73 +500,84 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                     umr >= 17
                         ? WidgetImage(
                             title: "Berkas Foto KTP",
-                            image:
-                                berkasUlang == true || state.berkas.status == 1
-                                    ? ktp
-                                    : berkasUlang == false
-                                        ? null
-                                        : ktp,
-                            imageBase64: berkasUlang ? null : state.berkas.ktp,
+                            image: ktp,
+                            // berkasUlang == true || state.berkas.status == 1
+                            //     ? ktp
+                            //     : berkasUlang == false
+                            //         ? ktp
+                            //         : ktp,
+                            imageBase64:
+                                // berkasUlang ? null :
+                                state.berkas.ktp,
                             onTap: () {
-                              //      if (berkasUlang == false) {
-                              // } else {
-                              setState(() async {
-                                ktp = await getImage();
-                              });
-                              // }
+                              if (berkasUlang == false) {
+                              } else {
+                                setState(() async {
+                                  ktp = await getImage();
+                                });
+                              }
                             })
                         : const BoxGap(),
                     WidgetImage(
                         title: "Berkas Foto KK",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? kk
-                            : berkasUlang == false
-                                ? null
-                                : kk,
-                        imageBase64: berkasUlang ? null : state.berkas.kk,
+                        image: kk,
+                        // berkasUlang == true || state.berkas.status == 1
+                        //     ? kk
+                        //     : berkasUlang == false
+                        //         ? kk
+                        //         : kk,
+                        imageBase64:
+                            // berkasUlang ? null :
+                            state.berkas.kk,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            kk = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              kk = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title: "Berkas Surat Keterangan Masih Kuliah",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? kuliah
-                            : berkasUlang == false
-                                ? null
-                                : kuliah,
-                        imageBase64: berkasUlang
-                            ? null
-                            : state.berkas.suratKeteranganMasihKuliah,
+                        image: kuliah,
+                        //  berkasUlang == true || state.berkas.status == 1
+                        //     ? kuliah
+                        //     : berkasUlang == false
+                        //         ? null
+                        //         : kuliah,
+                        imageBase64:
+                            // berkasUlang
+                            //     ? null
+                            //     :
+                            state.berkas.suratKeteranganMasihKuliah,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            kuliah = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              kuliah = await getImage();
+                            });
+                          }
                         }),
                     WidgetImage(
                         title: "Berkas Surat Keterangan Belum Bekerja",
-                        image: berkasUlang == true || state.berkas.status == 1
-                            ? bekerja
-                            : berkasUlang == false
-                                ? null
-                                : bekerja,
-                        imageBase64: berkasUlang
-                            ? null
-                            : state.berkas.suratKeteranganBelumBekerja,
+                        image: bekerja,
+                        //  berkasUlang == true || state.berkas.status == 1
+                        //     ? bekerja
+                        //     : berkasUlang == false
+                        //         ? null
+                        //         : bekerja,
+                        imageBase64:
+                            // berkasUlang
+                            //     ? null
+                            //     :
+                            state.berkas.suratKeteranganBelumBekerja,
                         onTap: () {
-                          //  if (berkasUlang == false) {
-                          // } else {
-                          setState(() async {
-                            bekerja = await getImage();
-                          });
-                          // }
+                          if (berkasUlang == false) {
+                          } else {
+                            setState(() async {
+                              bekerja = await getImage();
+                            });
+                          }
                         }),
                   ],
                 );
@@ -498,35 +600,84 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
       ),
       body: SingleChildScrollView(
         child: BlocConsumer<BerkasCubit, BerkasState>(
-          listener: (context, stateBerkas) {
-            print("berkasState");
+          listener: (context, stateBerkas) async {
+            print("berkasState 2 2");
             print(stateBerkas);
+
+            if (stateBerkas is BerkasLoaded) {}
             if (stateBerkas is BerkasFailed) {
+              context.read<BerkasUlangCubit>().setValue(true);
+
               isLoading = false;
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(stateBerkas.error)));
             }
             // TODO: implement listener
             if (stateBerkas is BerkasPosted) {
+              context.read<BerkasUlangCubit>().setValue(false);
               context
                   .read<BerkasCubit>()
                   .getBerkas(token: tokenBox.get('token'));
             }
           },
           builder: (context, berkasState) {
+            if (berkasState is BerkasLoaded) {
+              if (berkasState.berkas.status == 1) {
+                context.read<BerkasUlangCubit>().setValue(true);
+              }
+            }
             print("berkasState");
             print(berkasState);
             if (berkasState is BerkasFailed) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(berkasState.error)));
+              print(berkasState.error);
+              // ScaffoldMessenger.of(context)
+              //     .showSnackBar(SnackBar(content: Text(berkasState.error)));
             }
             return Column(
               children: [
                 BlocBuilder<BerkasUlangCubit, bool>(
                   builder: (context, berkasUlang) {
                     return berkasState is BerkasLoaded
-                        ? berkasUlang == false
-                            ? berkasState.berkas.status == 4
+                        // ? berkasUlang == false
+                        ? berkasState.berkas.status == 4
+                            ? Container(
+                                margin: EdgeInsets.symmetric(
+                                    vertical:
+                                        getActualY(y: 12, context: context),
+                                    horizontal: getActualX(
+                                        x: defaultMargin, context: context)),
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        getActualX(x: 12, context: context),
+                                    vertical:
+                                        getActualY(y: 8, context: context)),
+                                decoration: BoxDecoration(
+                                    boxShadow: [defaultBoxShadow],
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.red.shade200),
+                                    borderRadius: BorderRadius.circular(8)),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.info,
+                                      color: Colors.red.shade200,
+                                    ),
+                                    BoxGap(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        "Berkas Data Ulang tidak disetujui",
+                                        style: tahomaR,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : berkasState.berkas.status == 2
                                 ? Container(
                                     margin: EdgeInsets.symmetric(
                                         vertical:
@@ -544,7 +695,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                         boxShadow: [defaultBoxShadow],
                                         color: Colors.white,
                                         border: Border.all(
-                                            color: Colors.red.shade200),
+                                            color: Colors.blue.shade200),
                                         borderRadius: BorderRadius.circular(8)),
                                     child: Row(
                                       crossAxisAlignment:
@@ -552,63 +703,22 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                       children: [
                                         Icon(
                                           Icons.info,
-                                          color: Colors.red.shade200,
+                                          color: Colors.blue.shade200,
                                         ),
                                         BoxGap(
                                           width: 8,
                                         ),
                                         Expanded(
                                           child: Text(
-                                            berkasState.berkas.alasan ?? '',
+                                            "Menunggu Verifikasi Berkas Data Ulang",
                                             style: tahomaR,
                                           ),
                                         ),
                                       ],
                                     ),
                                   )
-                                : berkasState.berkas.status == 2
-                                    ? Container(
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: getActualY(
-                                                y: 12, context: context),
-                                            horizontal: getActualX(
-                                                x: defaultMargin,
-                                                context: context)),
-                                        width: double.infinity,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: getActualX(
-                                                x: 12, context: context),
-                                            vertical: getActualY(
-                                                y: 8, context: context)),
-                                        decoration: BoxDecoration(
-                                            boxShadow: [defaultBoxShadow],
-                                            color: Colors.white,
-                                            border: Border.all(
-                                                color: Colors.blue.shade200),
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Icon(
-                                              Icons.info,
-                                              color: Colors.blue.shade200,
-                                            ),
-                                            BoxGap(
-                                              width: 8,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                "Menunggu Verifikasi Berkas Data Ulang",
-                                                style: tahomaR,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : const BoxGap()
-                            : const BoxGap()
+                                : const BoxGap()
+                        // : const BoxGap()
                         : const BoxGap();
                   },
                 ),
@@ -661,6 +771,47 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                               ),
                               const BoxGap(
                                 height: 32,
+                              ),
+                              const Text(
+                                "Dana Pensiun Angkasa Pura II menjamin kerahasiaan data Peserta Penerima Manfaat Pensiun sesuai dengan peraturan perundangan yang berlaku.",
+                                style: tahomaR,
+                              ),
+                              const BoxGap(
+                                height: 12,
+                              ),
+                              Row(
+                                children: [
+                                  BlocBuilder<BerkasUlangCubit, bool>(
+                                      builder: (context, berkasUlangState) {
+                                    return BlocBuilder<BerkasUlangCubit, bool>(
+                                      builder: (context, state) {
+                                        return Checkbox(
+                                            value: berkasState is BerkasLoaded
+                                                ? berkasState.berkas.status == 1
+                                                    ? isAgree
+                                                    : berkasUlangState
+                                                        ? isAgree
+                                                        : true
+                                                : false,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                isAgree = value!;
+                                              });
+                                            });
+                                      },
+                                    );
+                                  }),
+                                  Expanded(
+                                      child: Text(
+                                    "Dengan ini saya sebagai Penerima Manfaat Pensiun menyetujui bahwa data pribadi saya dapat di pergunakan oleh Dana Pensiun Angkasa Pura II dan afiliasinya dalam melakukan pemrosesan/pengelolaan data sesuai dengan fungsi dan tujuan Dana Pensiun",
+                                    style: tahomaR.copyWith(
+                                        fontSize: getActualY(
+                                            y: 12, context: context)),
+                                  ))
+                                ],
+                              ),
+                              const BoxGap(
+                                height: 12,
                               ),
                               Text(
                                 name,
@@ -1103,30 +1254,175 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                       ? BerkasAnak(umr: umur)
                                       : BerkasBiasa(),
                               const BoxGap(
+                                height: 12,
+                              ),
+                              isErrorAgree
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                          top: getActualY(
+                                              y: 4, context: context)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.info,
+                                            color: Colors.red,
+                                            size: getActualY(
+                                                y: 20, context: context),
+                                          ),
+                                          BoxGap(
+                                            width: 4,
+                                          ),
+                                          Text(
+                                            "Pernyataan persetujuan wajib di ceklis",
+                                            style: tahomaR.copyWith(
+                                                fontSize: 10,
+                                                color: Colors.red),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                              const BoxGap(
                                 height: 20,
                               ),
                               Align(
                                 alignment: Alignment.center,
                                 child: BlocBuilder<BerkasUlangCubit, bool>(
                                   builder: (context, berkasUlangState) {
-                                    return 
-                                    berkasState is BerkasLoaded
+                                    // return Text(berkasState is BerkasLoaded ? berkasState.berkas.status.toString() : '');
+                                    return berkasState is BerkasLoaded
                                         ? berkasUlangState == true ||
                                                 berkasState.berkas.status == 1
-                                            ? 
-                                            isLoading == false
-                                                ? 
-                                                CustomButton(
+                                            ? isLoading == false
+                                                ? CustomButton(
                                                     isLoading: state
                                                             is DataPesertaLoading &&
                                                         berkasState
                                                             is BerkasLoading,
                                                     text: "Simpan",
-                                                    onPressed: () {
+                                                    onPressed: () async {
+                                                      print("valueProp");
                                                       print(valueProp);
+                                                      var fileKuliah = kuliah ==
+                                                              null
+                                                          ? berkasState.berkas
+                                                                      .suratKeteranganMasihKuliah ==
+                                                                  null
+                                                              ? null
+                                                              : File((await convertBase64ToPickedFile(
+                                                                      berkasState
+                                                                          .berkas
+                                                                          .suratKeteranganMasihKuliah!,
+                                                                      "kuliah.png"))
+                                                                  .path)
+                                                          : File(kuliah!.path);
+
+                                                      var filekk = kk == null
+                                                          ? berkasState.berkas
+                                                                      .kk ==
+                                                                  null
+                                                              ? null
+                                                              : File((await convertBase64ToPickedFile(
+                                                                      berkasState
+                                                                          .berkas
+                                                                          .kk!,
+                                                                      "kk.png"))
+                                                                  .path)
+                                                          : File(kk!.path);
+
+                                                      print(filekk);
+
+                                                      var filebekerja = bekerja ==
+                                                              null
+                                                          ? berkasState.berkas
+                                                                      .suratKeteranganBelumBekerja ==
+                                                                  null
+                                                              ? null
+                                                              : File((await convertBase64ToPickedFile(
+                                                                      berkasState
+                                                                          .berkas
+                                                                          .suratKeteranganBelumBekerja!,
+                                                                      "bekerja.png"))
+                                                                  .path)
+                                                          : File(bekerja!.path);
+
+                                                      var fileKTP = ktp == null
+                                                          ? berkasState.berkas
+                                                                      .ktp ==
+                                                                  null
+                                                              ? null
+                                                              : File((await convertBase64ToPickedFile(
+                                                                      berkasState
+                                                                          .berkas
+                                                                          .ktp!,
+                                                                      "ktp.png"))
+                                                                  .path)
+                                                          : File(ktp!.path);
+
+                                                      var filemenikah = menikah ==
+                                                              null
+                                                          ? berkasState.berkas
+                                                                      .suratKeteranganBelumMenikah ==
+                                                                  null
+                                                              ? null
+                                                              : File((await convertBase64ToPickedFile(
+                                                                      berkasState
+                                                                          .berkas
+                                                                          .suratKeteranganBelumMenikah!,
+                                                                      "menikah.png"))
+                                                                  .path)
+                                                          : File(menikah!.path);
+
+                                                      var fileNPWP = npwp ==
+                                                              null
+                                                          ? berkasState.berkas
+                                                                      .npwp ==
+                                                                  null
+                                                              ? null
+                                                              : File((await convertBase64ToPickedFile(
+                                                                      berkasState
+                                                                          .berkas
+                                                                          .npwp!,
+                                                                      "npwp.png"))
+                                                                  .path)
+                                                          : File(npwp!.path);
+
+                                                      setState(() {
+                                                        if (isAgree) {
+                                                          isErrorAgree = false;
+                                                        } else {
+                                                          isErrorAgree = true;
+                                                        }
+                                                      });
                                                       if (_formKey.currentState!
                                                           .validate()) {
-                                                        if (valueProp == null) {
+                                                        setState(() {});
+                                                        if (isAgree == false) {
+                                                          setState(() {
+                                                            isErrorAgree = true;
+                                                          });
+
+                                                          Future(() {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                content: Text(
+                                                                  "Pernyataan persetujuan wajib di ceklis ",
+                                                                  style: tahomaR
+                                                                      .copyWith(
+                                                                          color:
+                                                                              Colors.white),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          });
+                                                        } else if (valueProp ==
+                                                            null) {
                                                           ScaffoldMessenger.of(
                                                                   context)
                                                               .showSnackBar(
@@ -1148,9 +1444,11 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                               state.data
                                                                       .stsKelAkhir ==
                                                                   "Duda") {
-                                                            if (kk == null ||
-                                                                ktp == null ||
-                                                                menikah ==
+                                                            if (filekk ==
+                                                                    null ||
+                                                                fileKTP ==
+                                                                    null ||
+                                                                filemenikah ==
                                                                     null) {
                                                               ScaffoldMessenger
                                                                       .of(
@@ -1201,19 +1499,17 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                           .text,
                                                                   telpKerabat:
                                                                       noTelpKerabatController
-                                                                          .text);
-                                                              var fileKTP =
-                                                                  File(ktp!
-                                                                      .path);
-                                                              var fileKK = File(
-                                                                  kk!.path);
+                                                                          .text,
+                                                                  aggrement:
+                                                                      isAgree);
 
-                                                              var filemenikah =
-                                                                  File(menikah!
-                                                                      .path);
+                                                              // var fileKK = File(
+                                                              //     kk!.path);
+
                                                               if (npwp ==
                                                                   null) {
-                                                                    isLoading = true;
+                                                                isLoading =
+                                                                    true;
                                                                 context
                                                                     .read<
                                                                         BerkasCubit>()
@@ -1227,17 +1523,16 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                       'surat_keterangan_belum_menikah'
                                                                     ],
                                                                         files: [
-                                                                      fileKTP,
-                                                                      fileKK,
+                                                                      filekk!,
+                                                                      fileKTP!,
+
                                                                       // fileNPWP,
-                                                                      filemenikah
+                                                                      filemenikah!
                                                                     ]);
                                                               } else {
-                                                                    isLoading = true;
+                                                                isLoading =
+                                                                    true;
 
-                                                                var fileNPWP =
-                                                                    File(npwp!
-                                                                        .path);
                                                                 context
                                                                     .read<
                                                                         BerkasCubit>()
@@ -1251,21 +1546,23 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                       'surat_keterangan_belum_menikah'
                                                                     ],
                                                                         files: [
-                                                                      fileKTP,
-                                                                      fileKK,
-                                                                      fileNPWP,
-                                                                      filemenikah
+                                                                      filekk!,
+                                                                      fileKTP!,
+                                                                      fileNPWP!,
+                                                                      filemenikah!
                                                                     ]);
                                                               }
                                                             }
                                                           } else if (state.data
                                                                   .stsKelAkhir ==
                                                               "Anak") {
+                                                            print(umur);
                                                             if (umur <= 17) {
-                                                              if (kk == null ||
-                                                                  kuliah ==
+                                                              if (filekk ==
                                                                       null ||
-                                                                  bekerja ==
+                                                                  fileKuliah ==
+                                                                      null ||
+                                                                  filebekerja ==
                                                                       null) {
                                                                 ScaffoldMessenger.of(
                                                                         context)
@@ -1278,7 +1575,11 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                               style: tahomaR.copyWith(color: Colors.white),
                                                                             )));
                                                               } else {
-                                                                    isLoading = true;
+                                                                isLoading =
+                                                                    true;
+
+                                                                print(
+                                                                    "DIBAWAH 17");
 
                                                                 context.read<DataPesertaCubit>().updateDataPeserta(
                                                                     token: tokenBox.get(
@@ -1309,21 +1610,40 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                             .text,
                                                                     telpKerabat:
                                                                         noTelpKerabatController
-                                                                            .text);
+                                                                            .text,
+                                                                    aggrement:
+                                                                        isAgree);
 
-                                                                var filekk =
-                                                                    File(kk!
-                                                                        .path);
+                                                                // var filemenikah = menikah ==
+                                                                //         null
+                                                                //     ? File((await convertBase64ToPickedFile(
+                                                                //             berkasState
+                                                                //                 .berkas.suratKeteranganBelumMenikah!,
+                                                                //             "menikah.png"))
+                                                                //         .path)
+                                                                //     : File(menikah!
+                                                                //         .path);
+                                                                // var filebekerka = bekerja ==
+                                                                //         null
+                                                                //     ? File((await convertBase64ToPickedFile(
+                                                                //             berkasState
+                                                                //                 .berkas.suratKeteranganBelumBekerja!,
+                                                                //             "bekerja.png"))
+                                                                //         .path)
+                                                                //     : File(bekerja!
+                                                                //         .path);
+                                                                // var fileKuliah = kuliah ==
+                                                                //         null
+                                                                //     ? File((await convertBase64ToPickedFile(
+                                                                //             berkasState
+                                                                //                 .berkas.suratKeteranganMasihKuliah!,
+                                                                //             "kuliah.png"))
+                                                                //         .path)
+                                                                //     : File(kuliah!
+                                                                //         .path);
 
-                                                                var filemenikah =
-                                                                    File(menikah!
-                                                                        .path);
-                                                                var filebekerka =
-                                                                    File(bekerja!
-                                                                        .path);
-                                                                var fileKuliah =
-                                                                    File(kuliah!
-                                                                        .path);
+                                                                print(
+                                                                    fileKuliah);
 
                                                                 context
                                                                     .read<
@@ -1332,22 +1652,27 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                         token: tokenBox
                                                                             .get('token'),
                                                                         keys: [
-                                                                      'kk'
-                                                                          'surat_keterangan_masih_kuliah',
+                                                                      'kk',
+                                                                      'surat_keterangan_masih_kuliah',
                                                                       'surat_keterangan_belum_bekerja',
                                                                     ],
                                                                         files: [
-                                                                      filekk,
-                                                                      fileKuliah,
-                                                                      filebekerka,
+                                                                      filekk!,
+                                                                      fileKuliah!,
+                                                                      filebekerja!,
                                                                     ]);
                                                               }
                                                             } else {
-                                                              if (ktp == null ||
-                                                                  kk == null ||
-                                                                  kuliah ==
+                                                              print(
+                                                                  "UMUR => $umur");
+                                                              print(kk);
+                                                              if (fileKTP ==
                                                                       null ||
-                                                                  bekerja ==
+                                                                  filekk ==
+                                                                      null ||
+                                                                  fileKuliah ==
+                                                                      null ||
+                                                                  filebekerja ==
                                                                       null) {
                                                                 ScaffoldMessenger.of(
                                                                         context)
@@ -1360,7 +1685,10 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                               style: tahomaR.copyWith(color: Colors.white),
                                                                             )));
                                                               } else {
-                                                                    isLoading = true;
+                                                                print(
+                                                                    "UMUR ==> $umur");
+                                                                isLoading =
+                                                                    true;
 
                                                                 context.read<DataPesertaCubit>().updateDataPeserta(
                                                                     token: tokenBox.get(
@@ -1391,25 +1719,58 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                             .text,
                                                                     telpKerabat:
                                                                         noTelpKerabatController
-                                                                            .text);
+                                                                            .text,
+                                                                    aggrement:
+                                                                        isAgree);
 
-                                                                var fileKTP =
-                                                                    File(ktp!
-                                                                        .path);
-                                                                var filekk =
-                                                                    File(kk!
-                                                                        .path);
+                                                                print(
+                                                                    "DISINI MASUK");
 
-                                                                var filemenikah =
-                                                                    File(menikah!
-                                                                        .path);
-                                                                var filebekerka =
-                                                                    File(bekerja!
-                                                                        .path);
-                                                                var fileKuliah =
-                                                                    File(kuliah!
-                                                                        .path);
+                                                                // var fileKTP = ktp ==
+                                                                //         null
+                                                                //     ? File((await convertBase64ToPickedFile(
+                                                                //             berkasState
+                                                                //                 .berkas.ktp!,
+                                                                //             "ktp.png"))
+                                                                //         .path)
+                                                                //     : File(ktp!
+                                                                //         .path);
+                                                                // var filekk = kk ==
+                                                                //         null
+                                                                //     ? File((await convertBase64ToPickedFile(
+                                                                //             berkasState
+                                                                //                 .berkas.kk!,
+                                                                //             "kk.png"))
+                                                                //         .path)
+                                                                //     : File(kk!
+                                                                //         .path);
 
+                                                                // // var filemenikah =
+                                                                // //     File(menikah!
+                                                                // //         .path);
+                                                                // var filebekerka = bekerja ==
+                                                                //         null
+                                                                //     ? File((await convertBase64ToPickedFile(
+                                                                //             berkasState
+                                                                //                 .berkas.suratKeteranganBelumBekerja!,
+                                                                //             "bekerja.png"))
+                                                                //         .path)
+                                                                //     : File(bekerja!
+                                                                //         .path);
+                                                                // var fileKuliah = kuliah ==
+                                                                //         null
+                                                                //     ? berkasState.berkas.suratKeteranganMasihKuliah ==
+                                                                //             null
+                                                                //         ? null
+                                                                //         : File((await convertBase64ToPickedFile(berkasState.berkas.suratKeteranganMasihKuliah!, "kuliah.png"))
+                                                                //             .path)
+                                                                //     : File(kuliah!
+                                                                //         .path);
+
+                                                                print(
+                                                                    fileKuliah);
+                                                                print(
+                                                                    "PRINT MASUK SINI");
                                                                 context
                                                                     .read<
                                                                         BerkasCubit>()
@@ -1417,22 +1778,24 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                         token: tokenBox
                                                                             .get('token'),
                                                                         keys: [
-                                                                      'ktp'
-                                                                          'kk'
-                                                                          'surat_keterangan_masih_kuliah',
+                                                                      'ktp',
+                                                                      'kk',
+                                                                      'surat_keterangan_masih_kuliah',
                                                                       'surat_keterangan_belum_bekerja',
                                                                     ],
                                                                         files: [
-                                                                      fileKTP,
-                                                                      filekk,
-                                                                      fileKuliah,
-                                                                      filebekerka,
+                                                                      fileKTP!,
+                                                                      filekk!,
+                                                                      fileKuliah!,
+                                                                      filebekerja!,
                                                                     ]);
                                                               }
                                                             }
                                                           } else {
-                                                            if (kk == null ||
-                                                                ktp == null) {
+                                                            if (filekk ==
+                                                                    null ||
+                                                                fileKTP ==
+                                                                    null) {
                                                               ScaffoldMessenger
                                                                       .of(
                                                                           context)
@@ -1447,7 +1810,7 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                                 tahomaR.copyWith(color: Colors.white),
                                                                           )));
                                                             } else {
-                                                                    isLoading = true;
+                                                              isLoading = true;
 
                                                               context.read<DataPesertaCubit>().updateDataPeserta(
                                                                   token: tokenBox.get(
@@ -1480,15 +1843,18 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                           .text,
                                                                   telpKerabat:
                                                                       noTelpKerabatController
-                                                                          .text);
+                                                                          .text,
+                                                                  aggrement:
+                                                                      isAgree);
                                                             }
-                                                            var fileKTP =
-                                                                File(ktp!.path);
-                                                            var fileKK =
-                                                                File(kk!.path);
+                                                            // var fileKTP =
+                                                            //     File(ktp!.path);
+                                                            // var fileKK =
+                                                            //     File(kk!.path);
 
-                                                            if (npwp == null) {
-                                                                    isLoading = true;
+                                                            if (fileNPWP ==
+                                                                null) {
+                                                              isLoading = true;
 
                                                               context
                                                                   .read<
@@ -1503,16 +1869,17 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                     // 'npwp'
                                                                   ],
                                                                       files: [
-                                                                    fileKTP,
-                                                                    fileKK,
+                                                                    filekk!,
+                                                                    fileKTP!,
+
                                                                     // fileNPWP
                                                                   ]);
                                                             } else {
-                                                                    isLoading = true;
+                                                              isLoading = true;
 
-                                                              var fileNPWP =
-                                                                  File(npwp!
-                                                                      .path);
+                                                              // var fileNPWP =
+                                                              //     File(npwp!
+                                                              //         .path);
                                                               context
                                                                   .read<
                                                                       BerkasCubit>()
@@ -1525,9 +1892,9 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                     'npwp'
                                                                   ],
                                                                       files: [
-                                                                    fileKTP,
-                                                                    fileKK,
-                                                                    fileNPWP
+                                                                    filekk!,
+                                                                    fileKTP!,
+                                                                    fileNPWP!
                                                                   ]);
                                                             }
                                                           }
@@ -1552,19 +1919,63 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                       }
                                                     })
                                                 : berkasState.berkas.status == 2
-                                                    ? Container()
+                                                    ? Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 8),
+                                                        height: 40,
+                                                        child: CustomButton(
+                                                          buttonColor:
+                                                              Colors.blue,
+                                                          borderColor:
+                                                              Colors.blue,
+                                                          onPressed: () {
+                                                            // Navigator.pushReplacementNamed(context, '/unggah');
+                                                            context
+                                                                .read<
+                                                                    BerkasUlangCubit>()
+                                                                .setValue(true);
+                                                            Navigator
+                                                                .pushReplacementNamed(
+                                                                    context,
+                                                                    dataUlangRoute);
+                                                          },
+                                                          fontTextSize: 14,
+                                                          text: "UPDATE BERKAS",
+                                                          // text: berkasState.berkas.status.toString(),
+                                                        ),
+                                                      )
                                                     : berkasState.berkas
                                                                 .status ==
                                                             4
-                                                        ? CustomButton(
-                                                            onPressed: () {
-                                                              context
-                                                                  .read<
-                                                                      BerkasUlangCubit>()
-                                                                  .setValue(
-                                                                      true);
-                                                            },
-                                                            text: "ULANGI",
+                                                        ? Container(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        8),
+                                                            height: 40,
+                                                            child: CustomButton(
+                                                              buttonColor:
+                                                                  Colors.blue,
+                                                              borderColor:
+                                                                  Colors.blue,
+                                                              onPressed: () {
+                                                                // Navigator.pushReplacementNamed(context, '/unggah');
+                                                                context
+                                                                    .read<
+                                                                        BerkasUlangCubit>()
+                                                                    .setValue(
+                                                                        true);
+                                                                Navigator
+                                                                    .pushReplacementNamed(
+                                                                        context,
+                                                                        dataUlangRoute);
+                                                              },
+                                                              fontTextSize: 14,
+                                                              text:
+                                                                  "UPDATE BERKAS",
+                                                              // text: berkasState.berkas.status.toString(),
+                                                            ),
                                                           )
                                                         : berkasState.berkas
                                                                     .status ==
@@ -1610,18 +2021,73 @@ class _DataUlangScreenState extends State<DataUlangScreen> {
                                                                           context
                                                                               .read<BerkasUlangCubit>()
                                                                               .setValue(true);
+                                                                          Navigator.pushReplacementNamed(
+                                                                              context,
+                                                                              dataUlangRoute);
                                                                         },
                                                                         fontTextSize:
                                                                             14,
                                                                         text:
                                                                             "UPDATE BERKAS",
+                                                                        buttonColor:
+                                                                            Colors.blue,
+                                                                        borderColor:
+                                                                            Colors.blue,
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ],
                                                               )
                                                             : Container()
-                                            : Container()
+                                            : berkasState.berkas.status == 4
+                                                ? Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8),
+                                                    height: 40,
+                                                    child: CustomButton(
+                                                      onPressed: () {
+                                                        // Navigator.pushReplacementNamed(context, '/unggah');
+                                                        context
+                                                            .read<
+                                                                BerkasUlangCubit>()
+                                                            .setValue(true);
+                                                        Navigator
+                                                            .pushReplacementNamed(
+                                                                context,
+                                                                dataUlangRoute);
+                                                      },
+                                                      fontTextSize: 14,
+                                                      text: "UPDATE BERKAS",
+                                                      buttonColor: Colors.blue,
+                                                      borderColor: Colors.blue,
+                                                      // text: berkasState.berkas.status.toString(),
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8),
+                                                    height: 40,
+                                                    child: CustomButton(
+                                                      onPressed: () {
+                                                        // Navigator.pushReplacementNamed(context, '/unggah');
+                                                        context
+                                                            .read<
+                                                                BerkasUlangCubit>()
+                                                            .setValue(true);
+                                                        Navigator
+                                                            .pushReplacementNamed(
+                                                                context,
+                                                                dataUlangRoute);
+                                                      },
+                                                      fontTextSize: 14,
+                                                      text: "UPDATE BERKAS",
+                                                      buttonColor: Colors.blue,
+                                                      borderColor: Colors.blue,
+                                                      // text: berkasState.berkas.status.toString(),
+                                                    ),
+                                                  )
                                         : Container();
                                   },
                                 ),
