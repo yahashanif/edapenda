@@ -1,5 +1,8 @@
 import 'dart:convert';
+<<<<<<< HEAD
 import 'dart:developer';
+=======
+>>>>>>> 9f51bdf (commit lagi)
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -21,9 +24,16 @@ class BaseRepository {
       // log(jsonEncode(body));
       // log(body.toString());
       // Log(body);
+<<<<<<< HEAD
       final url = param != null
           ? Uri.https(baseUrl, "/angkasa/api/${service}", param)
           : Uri.https(baseUrl, "/angkasa/api/${service}");
+=======
+      service = "/edapenda/api/$service";
+      final url = param != null
+          ? Uri.https(baseUrl, service, param)
+          : Uri.https(baseUrl, service);
+>>>>>>> 9f51bdf (commit lagi)
       // print(createHeader(token: token!, url: service, method: "POST"));
       // print(createHeaderWithoutToken(url: service, method: 'POST'));
       print("url");
@@ -51,10 +61,19 @@ class BaseRepository {
     Map<String, dynamic>? param,
     String? token,
   }) async {
+<<<<<<< HEAD
     try {
       final url = param != null
           ? Uri.https(baseUrl, "/angkasa/api/$service", param)
           : Uri.https(baseUrl, "/angkasa/api/$service");
+=======
+    service = "/edapenda/api/$service";
+
+    try {
+      final url = param != null
+          ? Uri.https(baseUrl, service, param)
+          : Uri.https(baseUrl, service);
+>>>>>>> 9f51bdf (commit lagi)
 
       // Prepare multipart request
       var request = http.MultipartRequest('POST', url);
@@ -108,6 +127,7 @@ class BaseRepository {
     required String service,
     String? token,
   }) async {
+<<<<<<< HEAD
     try {
       // Log("service");
       print(service);
@@ -115,6 +135,18 @@ class BaseRepository {
       final url = param != null
           ? Uri.https(baseUrl, "/angkasa/api/${service}", param)
           : Uri.https(baseUrl, "/angkasa/api/${service}");
+=======
+    service = "/edapenda/api/$service";
+
+    try {
+      // Log("service");
+      print(service);
+
+      print(Uri.https(baseUrl, service, param));
+      final url = param != null
+          ? Uri.https(baseUrl, service, param)
+          : Uri.https(baseUrl, service);
+>>>>>>> 9f51bdf (commit lagi)
       print(url.toString());
       final response = await http.get(isParse ? Uri.parse(service) : url,
           headers: token != null
@@ -134,6 +166,11 @@ class BaseRepository {
     required String service,
     String? token,
   }) async {
+<<<<<<< HEAD
+=======
+    service = "/edapenda/api/$service";
+
+>>>>>>> 9f51bdf (commit lagi)
     try {
       final url = Uri.https(baseUrl, service, {'_method': 'PUT'});
 
@@ -165,6 +202,11 @@ class BaseRepository {
     required String service,
     String? token,
   }) async {
+<<<<<<< HEAD
+=======
+    service = "/edapenda/api/$service";
+
+>>>>>>> 9f51bdf (commit lagi)
     try {
       // Log("Delete");
       // Log(Uri.https(baseUrl, service, param));

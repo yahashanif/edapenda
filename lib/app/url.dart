@@ -1,9 +1,17 @@
 bool isDev = true;
 // https://api-dev-awb.sismedika.online/api/v1
+<<<<<<< HEAD
 String baseUrl = isDev ? 'edapenda.mhmfajar.my.id' : 'api-awb.sismedika.online';
 
 String baseUrlImage =
     'https://edapenda.mhmfajar.my.id/uploads/d-upload-berkas/';
+=======
+// https://e-dapenda.dapenda.co.id/edapenda-api/
+// https://e-dapenda.dapenda.co.id/edapenda-api/edapenda-admin/angkasa/api/d_login/detail
+String baseUrl = "m.dapenda.co.id";
+
+String baseUrlImage = 'https://m.dapenda.co.id/uploads/d-upload-berkas/';
+>>>>>>> 9f51bdf (commit lagi)
 
 Map<String, String> createHeader({
   required String token,

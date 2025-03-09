@@ -44,7 +44,11 @@ class PetunjukBlok extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(
+<<<<<<< HEAD
                             "https://edapenda.mhmfajar.my.id/assets/images/petunjuk_1.png"),
+=======
+                            "https://m.dapenda.co.id/assets/images/petunjuk_1.png"),
+>>>>>>> 9f51bdf (commit lagi)
                         fit: BoxFit.cover),
                   ),
                 ),
@@ -55,7 +59,11 @@ class PetunjukBlok extends StatelessWidget {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(
+<<<<<<< HEAD
                             "https://edapenda.mhmfajar.my.id/assets/images/petunjuk_2.png"),
+=======
+                            "https://m.dapenda.co.id/assets/images/petunjuk_2.png"),
+>>>>>>> 9f51bdf (commit lagi)
                         fit: BoxFit.cover),
                   ),
                 ),

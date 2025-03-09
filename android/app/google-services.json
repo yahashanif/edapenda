@@ -1,13 +1,23 @@
 {
   "project_info": {
+<<<<<<< HEAD
     "project_number": "790298635343",
     "project_id": "edapenda-421e5",
     "storage_bucket": "edapenda-421e5.appspot.com"
+=======
+    "project_number": "964103652547",
+    "project_id": "edapenda-2025",
+    "storage_bucket": "edapenda-2025.firebasestorage.app"
+>>>>>>> 9f51bdf (commit lagi)
   },
   "client": [
     {
       "client_info": {
+<<<<<<< HEAD
         "mobilesdk_app_id": "1:790298635343:android:a2abb501d6339e339b8e3a",
+=======
+        "mobilesdk_app_id": "1:964103652547:android:8a6b608f6e31c40013ce76",
+>>>>>>> 9f51bdf (commit lagi)
         "android_client_info": {
           "package_name": "com.pensiun.eDapenda"
         }
@@ -15,7 +25,11 @@
       "oauth_client": [],
       "api_key": [
         {
+<<<<<<< HEAD
           "current_key": "AIzaSyBn68IU2mKRbgimumC6KoHAV7Oh7Z9k5Wg"
+=======
+          "current_key": "AIzaSyA4OGn5Tl2NY7dnth6wtTLwaPydxeLujZU"
+>>>>>>> 9f51bdf (commit lagi)
         }
       ],
       "services": {

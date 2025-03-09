@@ -15,6 +15,10 @@ class AuthRepository extends BaseRepository {
       'no_edu': edu,
       "no_fcm": tokenFcm
     };
+<<<<<<< HEAD
+=======
+    print("body");
+>>>>>>> 9f51bdf (commit lagi)
     print(body);
     Box tokenBox = Hive.box('token');
     final response = await post(
